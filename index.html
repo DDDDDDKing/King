@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>中南大学生物化学C名词解释自测</title>
+  <style>
+    :root{--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;--shadow:0 1px 2px rgba(0,0,0,.06);--brand:#0f172a;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";background:var(--bg);color:var(--text)}
+    .container{max-width:1100px;margin:0 auto;padding:16px}
+    @media(min-width:768px){.container{padding:32px}}
+    header{display:flex;gap:12px;flex-direction:column}
+    @media(min-width:768px){header{flex-direction:row;align-items:flex-end;justify-content:space-between}}
+    h1{margin:0;font-size:28px;letter-spacing:-.02em}
+    p{margin:6px 0 0;color:var(--muted);line-height:1.5}
+    .btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    button{border:1px solid var(--border);background:#fff;border-radius:14px;padding:10px 12px;cursor:pointer;box-shadow:var(--shadow)}
+    button:hover{background:#f1f5f9}
+    button.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+    button.primary:hover{opacity:.92;background:var(--brand)}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    select{border:1px solid var(--border);background:#fff;border-radius:14px;padding:10px 12px;box-shadow:var(--shadow)}
+    main{display:grid;grid-template-columns:1fr;gap:16px;margin-top:18px}
+    @media(min-width:1024px){main{grid-template-columns:2fr 1fr}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:16px}
+    @media(min-width:768px){.card{padding:22px}}
+    .topline{display:flex;gap:12px;justify-content:space-between;align-items:flex-start}
+    .label{font-size:12px;color:var(--muted)}
+    .term{font-size:20px;font-weight:700;margin-top:4px}
+    .full{font-size:13px;color:#334155;max-width:520px;margin-top:2px;text-align:right}
+    .masked{color:var(--muted);font-style:italic}
+    .section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px}
+    .section-title h2{font-size:14px;margin:0}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;min-height:44px;margin-top:10px}
+    .chip{border-radius:16px;padding:10px 12px;font-size:13px;border:1px solid var(--border);background:#fff}
+    .chip.dark{background:var(--brand);border-color:var(--brand);color:#fff}
+    .choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .choice{border-radius:16px;padding:10px 12px;font-size:13px;border:1px solid var(--border);background:#fff;cursor:pointer;box-shadow:var(--shadow)}
+    .choice:hover{background:#f1f5f9}
+    .feedback{margin-top:14px;padding:12px;border-radius:16px;border:1px solid var(--border);font-size:13px}
+    .ok{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
+    .bad{background:#fff1f2;border-color:#fecdd3;color:#9f1239}
+    .warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
+    .small{font-size:12px;color:var(--muted)}
+    .statlist{margin-top:12px;display:flex;flex-direction:column;gap:10px;max-height:520px;overflow:auto;padding-right:4px}
+    .stat{background:#f8fafc;border:1px solid var(--border);border-radius:16px;padding:12px}
+    .stat-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+    .stat-term{font-size:13px;font-weight:600}
+    .stat-meta{font-size:12px;color:var(--muted)}
+    .bar{height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:8px}
+    .bar > div{height:8px;background:var(--brand);width:0%}
+    .barrow{display:flex;align-items:center;gap:8px}
+    .pct{width:52px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:#334155}
+    footer{margin-top:22px;font-size:12px;color:var(--muted)}
+    .modeHint{display:inline-block;font-size:12px;color:var(--muted);padding:0 2px}
+    /* modal */
+    .modal{position:fixed;inset:0;z-index:50;display:none}
+    .modal.open{display:block}
+    .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.4)}
+    .dialog-wrap{position:absolute;left:0;right:0;top:24px;margin:auto;max-width:1100px;padding:0 16px}
+    .dialog{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.18);overflow:hidden}
+    .dialog-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+    .dialog-body{padding:16px 18px;max-height:70vh;overflow:auto}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid var(--border);font-size:12px}
+    .pill.ok{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
+    .pill.bad{background:#fff1f2;border-color:#fecdd3;color:#9f1239}
+    .attempt{background:#f8fafc;border:1px solid var(--border);border-radius:16px;padding:12px;margin-bottom:10px}
+    .attempt-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .grid2{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+    @media(min-width:768px){.grid2{grid-template-columns:1fr 1fr}}
+    textarea{font-family:inherit}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>中南大学生物化学C名词解释自测</h1>
+        <div class="small" style="margin-top:6px">power by 临五2401 King</div>
+        <p>选择“答题语言/模式” → 抽术语 → 选词排序或打字作答。句子默认隐藏，提交后才显示用于复盘。</p>
+      </div>
+      <div class="btnrow">
+        <label class="modeHint" for="answerModeSel">答题语言/模式：</label>
+        <select id="answerModeSel">
+          <option value="en_type">英文打字</option>
+          <option value="zh_type">中文打字</option>
+          <option value="en_order">英文选词</option>
+          <option value="zh_order">中文选词</option>
+        </select>
+        <button id="btnSettings">AI打分设置</button>
+        <button id="btnHistory">答题记录</button>
+        <button class="primary" id="btnNext">下一题</button>
+        <button id="btnClear">清空统计</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="topline">
+          <div>
+            <div class="label" id="lblTerm">当前术语</div>
+            <div class="term" id="term"></div>
+          </div>
+          <div style="text-align:right">
+            <div class="full masked" id="full">（句子已隐藏，提交后显示）</div>
+          </div>
+        </div>
+
+        <div class="section-title">
+          <h2 id="lblAns">你的答案</h2>
+          <div class="btnrow" id="orderBtns">
+            <button id="btnUndo">撤销</button>
+            <button id="btnReset">重置</button>
+            <button class="primary" id="btnSubmit">提交</button>
+          </div>
+          <div class="btnrow" id="typeBtns" style="display:none">
+            <button id="btnTypeClear">清空</button>
+            <button class="primary" id="btnTypeSubmit">提交</button>
+          </div>
+        </div>
+
+        <div id="orderArea">
+          <div class="chips" id="answerChips"></div>
+          <div class="section-title" style="margin-top:18px">
+            <h2 id="lblChoices">短语区（点击加入答案）</h2>
+          </div>
+          <div class="choices" id="choices"></div>
+        </div>
+
+        <div id="typingArea" style="display:none;margin-top:10px">
+          <textarea id="typeInput" rows="7" style="width:100%;border:1px solid var(--border);border-radius:16px;padding:12px;font-size:14px;box-shadow:var(--shadow);resize:vertical"></textarea>
+          <div class="small" id="typeHint" style="margin-top:8px">判分规则：忽略多余空格（连续空白会自动合并），其余字符需一致。</div>
+        </div>
+
+        <div id="feedback" class="feedback" style="display:none"></div>
+      </section>
+
+      <aside class="card">
+        <h2 style="margin:0;font-size:14px" id="lblStats">答题统计（本地）</h2>
+        <p class="small" style="margin:6px 0 0" id="lblRule">权重规则：基础 1 + 错误次数×2；出现次数少（&lt;3）的也会略微加权。</p>
+        <div class="statlist" id="stats"></div>
+      </aside>
+    </main>
+
+    <footer>统计/记录保存在浏览器本地（localStorage）。切换语言/模式只影响展示与作答方式，不影响同一术语的累计统计。</footer>
+  </div>
+
+  
+  
+  <div class="modal" id="startupModal">
+    <div class="backdrop" id="startupBackdrop"></div>
+    <div class="dialog-wrap">
+      <div class="dialog">
+        <div class="dialog-head">
+          <div>
+            <div style="font-weight:800">是否启用 AI 打字评分？</div>
+            <div class="small">评分标准为生化教研室公布的标准（已内置）。启用后仅“打字”模式会调用 API 进行语义打分。</div>
+          </div>
+        </div>
+        <div class="dialog-body">
+          <div class="small" style="margin-bottom:10px">说明：为避免密钥泄露，公开网页不会内置 API Key。若启用，请填写你的 SiliconFlow API Key（只保存在本机浏览器）。</div>
+          <div class="btnrow">
+            <button class="primary" id="btnStartupEnable">需要，去填写</button>
+            <button id="btnStartupSkip">不需要，忽略</button>
+          </div>
+          <div class="small" style="margin-top:10px;color:#64748b">你也可以稍后点击右上角 “AI打分设置”。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal" id="settingsModal">
+    <div class="backdrop" id="settingsBackdrop"></div>
+    <div class="dialog-wrap">
+      <div class="dialog">
+        <div class="dialog-head">
+          <div>
+            <div style="font-weight:800">AI 打字评分设置</div>
+            <div class="small">仅对“打字”模式生效。为安全起见，GitHub Pages 公共版本不内置密钥，需你自己填写（只保存在本机浏览器）。</div>
+          </div>
+          <div class="btnrow">
+            <button class="primary" id="btnSettingsClose">关闭</button>
+          </div>
+        </div>
+        <div class="dialog-body">
+          <div class="small" style="margin-bottom:8px">API Base URL（SiliconFlow OpenAI 兼容）：</div>
+          <input id="sfBaseUrl" style="width:100%;border:1px solid var(--border);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow)" value="https://api.siliconflow.cn/v1" />
+          <div class="small" style="margin:14px 0 8px">Model：</div>
+          <input id="sfModel" style="width:100%;border:1px solid var(--border);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow)" value="Qwen/Qwen2.5-72B-Instruct" />
+          <div class="small" style="margin:14px 0 8px">API Key（Bearer）：</div>
+          <input id="sfApiKey" type="password" placeholder="sk-..." style="width:100%;border:1px solid var(--border);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow)" />
+          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <label class="small"><input type="checkbox" id="aiGradeEnabled" /> 启用 AI 打字评分</label>
+            <span class="small">判定阈值：</span>
+            <input id="aiPassScore" type="number" min="0" max="100" value="85" style="width:90px;border:1px solid var(--border);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow)" />
+            <span class="small">（≥阈值记为正确）</span>
+          </div>
+          <div class="small" style="margin:14px 0 8px">评分标准：生化教研室公布的标准（已内置，不可修改）：</div>
+          <textarea id="rubricText" rows="6" style="width:100%;border:1px solid var(--border);border-radius:16px;padding:12px;box-shadow:var(--shadow);resize:vertical" placeholder="（已内置教研室评分标准）" readonly></textarea>
+          <div class="btnrow" style="margin-top:12px">
+            <button id="btnSettingsSave" class="primary">保存设置</button>
+            <button id="btnSettingsClear">清除密钥</button>
+            <button id="btnTestAI">测试连接</button>
+          </div>
+          <div id="settingsMsg" class="small" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<div class="modal" id="modal">
+    <div class="backdrop" id="backdrop"></div>
+    <div class="dialog-wrap">
+      <div class="dialog">
+        <div class="dialog-head">
+          <div>
+            <div style="font-weight:800" id="lblHistTitle">答题记录</div>
+            <div class="small" id="lblHistSub">最近 <span id="attemptCount">0</span> 条（最多保存 300 条）</div>
+          </div>
+          <div class="btnrow">
+            <button id="btnClearAttempts">清空记录</button>
+            <button class="primary" id="btnClose">关闭</button>
+          </div>
+        </div>
+        <div class="dialog-body" id="attemptList"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const BANK = [
+  { id:"Peptide bond", en:{term:"Peptide bond", full:"An amido bond linking the -amino group of one amino acid and the -carboxyl group of another in a peptide or protein molecule.", chunks:["An amido bond linking the -amino group","of one amino acid","and the -carboxyl group","of another","in a peptide","or protein molecule."]}, zh:{term:"肽键", full:"在肽或蛋白质分子中连接一个氨基酸的 -氨基和另一个氨基酸的 -羧基的酰胺键 。", chunks:["在肽或蛋白质分子中连接一个氨基酸","的 -氨基和另一个氨基酸","的 -羧基的","酰胺键 。"]} },
+  { id:"Protein primary structure", en:{term:"Protein primary structure", full:"The linear sequence of amino acids in a protein starting from the amino-terminal (N) end to the carboxyl-terminal (C) end.", chunks:["The linear sequence","of amino acids","in a protein starting","from the amino-terminal (N) end","to the carboxyl-terminal (C) end."]}, zh:{term:"蛋白质的一级结构", full:"蛋白质分子中从 N 端至 C 端的氨基酸排列顺序 。", chunks:["蛋白质分子中","从 N 端至","C 端的氨基酸排列顺序","。"]} },
+  { id:"Protein secondary structure", en:{term:"Protein secondary structure", full:"The spatial arrangement of local portions of a polypeptide chain of a protein, e.g. alpha helices, beta sheets, beta turns and omega loops, etc.", chunks:["The spatial arrangement","of local portions","of a polypeptide chain","of a protein, e.g. alpha helices, beta sheets, beta turns","and omega loops, etc."]}, zh:{term:"蛋白质的二级结构", full:"蛋白质分子中某一段肽链的局部空间结构，如 -螺旋、-折叠、-转角和无规卷曲 。", chunks:["蛋白质分子中某一段肽链","的局部空间结构","，如 -螺旋","、-折叠、-转角和无规卷曲","。"]} },
+  { id:"Domain", en:{term:"Domain", full:"A region of a protein that can fold, function and exist independently of the rest of the protein chain or structure.", chunks:["A region","of a protein","that can fold, function","and exist independently","of the rest","of the protein chain","or structure."]}, zh:{term:"结构域", full:"分子量较大的蛋白质常可折叠成多个结构较为紧密且稳定的区域，并各行其功能 。", chunks:["分子量较大的","蛋白质常可折叠成多个结构较","为紧密且稳定","的区域，并各行其功能","。"]} },
+  { id:"Isoelectric point (pI) of protein", en:{term:"Isoelectric point (pI) of protein", full:"The pH at which a protein has an equal number of positive and negative charges and hence bears no net charge.", chunks:["The pH at","which a protein has an equal number","of positive","and negative charges","and hence bears no net charge."]}, zh:{term:"蛋白质的等电点", full:"蛋白质溶液处于某一 pH 值时，蛋白质解离成正负离子的趋势相等，即成为兼性离子，净电荷为零 。", chunks:["蛋白质溶液处于某一 pH 值","时，蛋白质解离成正负离子","的趋势相等，","即成为兼性离子","，净电荷为零","。"]} },
+  { id:"Denaturation of protein", en:{term:"Denaturation of protein", full:"A process in which the folding structure of a protein is altered due to exposure to certain chemical or physical factors (e.g. heat, acid, solvents, etc.), causing alteration of chemical, physical and biological properties of the protein.", chunks:["A process in which the folding structure of a protein is altered due to exposure to certain chemical or physical factors (e.","g.","heat,","acid,","solvents,","etc.",")",",","causing alteration of chemical,","physical and biological properties of the protein."]}, zh:{term:"蛋白质变性", full:"某些物理和化学因素作用下，蛋白质特定的空间结构被破坏，即有序的空间结构变成无序的空间结构，从而导致其理化性质的改变和生物学活性的丧失 。", chunks:["某些物理和化学因素作用下","，蛋白质特定","的空间结构被破坏","，即有序的空间结构变成无序","的空间结构，","从而导致其理化性质","的改变和生物学活性","的丧失 。"]} },
+  { id:"Denaturation of DNA", en:{term:"Denaturation of DNA", full:"The disruption of the native conformation of DNA by separation of the DNA double helix into its two component strands, due to heat, chemicals, or change in pH, etc.", chunks:["The disruption","of the native conformation","of DNA","by separation","of the DNA double helix","into its two component strands, due","to heat, chemicals,","or change","in pH, etc."]}, zh:{term:"DNA 的变性", full:"在某些理化因素作用下，DNA 双链的互补碱基对之间的氢键断裂，使双链 DNA 解离为单链 。", chunks:["在某些理化因素作用下","，DNA 双链","的互补碱基对","之间的氢键断裂","，使双链 DNA 解离","为单链 。"]} },
+  { id:"Hyperchromic effect", en:{term:"Hyperchromic effect", full:"The increase in ultraviolet absorbance of a DNA at 260 nm while the DNA is denatured.", chunks:["The increase","in ultraviolet absorbance","of a DNA at 260 nm","while the DNA is denatured."]}, zh:{term:"增色效应", full:"在 DNA 解链过程中，有更多的包埋在双螺旋结构内部的碱基得以暴露，DNA 溶液在 260nm 处的吸光度随之增加的现象 。", chunks:["在 DNA 解链过程中","，有更多的包埋","在双螺旋结构内部","的碱基得以暴露","，DNA 溶液","在 260nm 处","的吸光度随之增加","的现象 。"]} },
+  { id:"Melting temperature (, 融解温度)", en:{term:"Melting temperature (, 融解温度)", full:"The temperature corresponding to half the maximal increase in ultraviolet absorbance of a thermally denatured DNA.", chunks:["The temperature corresponding","to half the maximal increase","in ultraviolet absorbance","of a thermally denatured DNA."]}, zh:{term:"融解温度", full:"在 DNA 解链过程中，紫外吸光度的变化达到最大变化值的一半时所对应的温度 。", chunks:["在 DNA 解链过程中","，紫外吸光度","的变化达到最大变化值","的一半时所对","应的温度 。"]} },
+  { id:"Annealing", en:{term:"Annealing", full:"The process of returning a thermally denatured DNA to its original native structure when it is cooled gradually.", chunks:["The process","of returning a thermally denatured DNA","to its original native structure","when it is cooled gradually."]}, zh:{term:"退火", full:"热变性的 DNA 经过缓慢冷却后即可复性，这一过程称为退火 。", chunks:["热变性的 DNA 经过缓慢冷却","后即可复性，","这一过程称为","退火 。"]} },
+  { id:"Holoenzyme", en:{term:"Holoenzyme", full:"A complete enzyme consisting of the apoenzyme portion plus the cofactor component.", chunks:["A complete enzyme consisting","of the apoenzyme portion plus the cofactor component."]}, zh:{term:"全酶", full:"由酶蛋白和辅因子共同构成的酶 。", chunks:["由酶蛋白和辅因子共同构成","的酶 。"]} },
+  { id:"Essential group", en:{term:"Essential group", full:"A chemical group on the side chain of amino acid residue of an enzyme that is closely related to the activity of the enzyme.", chunks:["A chemical group on the side chain","of amino acid residue","of an enzyme","that is closely related","to the activity","of the enzyme."]}, zh:{term:"必需基团", full:"间接或直接与酶催化活性相关的多肽链上某些氨基酸残基的功能基团 。", chunks:["间接或直接与","酶催化活性相关","的多肽链上某些氨基酸残基","的功能基团","。"]} },
+  { id:"Active center / active site", en:{term:"Active center / active site", full:"The region of an enzyme molecule that contains the substrate binding site and the catalytic site for converting the substrate(s) into product(s).", chunks:["The region","of an enzyme molecule","that contains the substrate binding site","and the catalytic site","for converting the substrate(s)","into product(s)."]}, zh:{term:"活性中心", full:"酶分子中的必需基团在空间结构上彼此靠近，组成具有特定空间结构的区域，它能与底物特异结合并将底物转化为产物 。", chunks:["酶分子中的必需基团","在空间结构上彼此靠近","，组成具有特定空间结构","的区域，它能","与底物特异结合","并将底物转化","为产物 。"]} },
+  { id:"Zymogen activation", en:{term:"Zymogen activation", full:"The process in which a zymogen is converted to an active enzyme by limited proteolysis and subsequently the active center of the enzyme is formed or exposed.", chunks:["The process","in which a zymogen is converted","to an active enzyme","by limited proteolysis","and subsequently the active center","of the enzyme is formed","or exposed."]}, zh:{term:"酶原激活", full:"在一定条件下，无活性的酶原向有催化活性的酶转化的过程，实则是酶活性中心的形成或暴露的过程 。", chunks:["在一定条件下","，无活性的酶原向有催化活性","的酶转化的过程","，实则是酶活性中心","的形成或暴露","的过程 。"]} },
+  { id:"Isoenzyme", en:{term:"Isoenzyme", full:"Multiple forms of an enzyme that catalyze the same reaction but differ from one another in one or more of the properties, such as structural, physical, chemical and even immunological properties.", chunks:["Multiple forms","of an enzyme","that catalyze the same reaction but differ","from one another","in one","or more","of the properties, such","as structural, physical, chemical","and even immunological properties."]}, zh:{term:"同工酶", full:"催化相同的化学反应，但酶蛋白的分子结构、理化性质乃至免疫学性质不同的一组酶 。", chunks:["催化相同的化学反应","，但酶蛋白的","分子结构、理化性质乃","至免疫学性质不同","的一组酶 。"]} },
+  { id:"Glycolysis", en:{term:"Glycolysis", full:"The degradation of carbohydrate whereby a molecule of glucose is converted to two molecules of pyruvate.", chunks:["The degradation","of carbohydrate whereby a molecule","of glucose is converted","to two molecules","of pyruvate."]}, zh:{term:"糖酵解", full:"一分子葡萄糖在细胞质中裂解为两分子丙酮酸的过程 。", chunks:["一分子葡萄糖","在细胞质中裂解","为两分子丙酮酸","的过程 。"]} },
+  { id:"Substrate-level phosphorylation", en:{term:"Substrate-level phosphorylation", full:"The synthesis of ATP from ADP by the phosphorylation of ADP coupled with exergonic breakdown of a high-energy organic substrate molecules.", chunks:["The synthesis","of ATP","from ADP","by the phosphorylation","of ADP coupled","with exergonic breakdown","of a high-energy organic substrate molecules."]}, zh:{term:"底物水平磷酸化", full:"ADP (GDP) 的磷酸化作用与高能化合物的高能键水解直接相偶联的产能方式 。", chunks:["ADP (GDP)","的磷酸化作用","与高能化合物","的高能键水解直接相偶联","的产能方式","。"]} },
+  { id:"Pastuer effect", en:{term:"Pastuer effect", full:"The phenomenon that the glycolytic pathway is inhibited under aerobic conditions.", chunks:["The phenomenon","that the glycolytic pathway is inhibited under aerobic conditions."]}, zh:{term:"巴斯德效应", full:"糖的有氧氧化抑制无氧分解的现象 。", chunks:["糖的有氧氧化抑制无氧分解","的现象 。"]} },
+  { id:"Gluconeogenesis", en:{term:"Gluconeogenesis", full:"The synthesis of glucose or glycogen from noncarbohydrate molecules, i.e., lactic acid, glycerol, glucogenic amino acids, etc.", chunks:["The synthesis of glucose or glycogen from noncarbohydrate molecules,","i.","e.",",","lactic acid,","glycerol,","glucogenic amino acids,","etc."]}, zh:{term:"糖异生", full:"由非糖化合物（如乳酸、甘油、生糖氨基酸等）转变为葡萄糖或糖原的过程 。", chunks:["由非糖化合物（如乳酸","、甘油、生糖氨基酸等）转变","为葡萄糖或糖原","的过程 。"]} },
+  { id:"Warburg effect", en:{term:"Warburg effect", full:"Cancer cells tend to convert most glucose to lactate via glycolysis regardless of whether oxygen is present.", chunks:["Cancer cells tend","to convert most glucose","to lactate via glycolysis regardless","of whether oxygen is present."]}, zh:{term:"瓦伯格效应", full:"肿瘤等增殖活跃的组织在有氧条件下，葡萄糖被分解生成乳酸的现象 。", chunks:["肿瘤等增殖活跃","的组织在有氧条件下","，葡萄糖被分解生成乳酸","的现象 。"]} },
+  { id:"Respiratory chain / Electron transfer chain", en:{term:"Respiratory chain / Electron transfer chain", full:"A series of electron carriers responsible for the transport of reducing equivalent from metabolite to molecular oxygen, with the net results of capturing energy for use in ATP synthesis, and of the reduction of oxygen to water.", chunks:["A series","of electron carriers responsible","for the transport","of reducing equivalent","from metabolite","to molecular oxygen,","with the net results","of capturing energy","for use","in ATP synthesis,","and of the reduction","of oxygen to water."]}, zh:{term:"呼吸链 / 电子传递链", full:"按一定顺序排列在线粒体内膜中的多个蛋白质复合体，形成一个连续传递电子/氢或还原当量的反应链，氧分子最终接受电子和  生成水 。", chunks:["按一定顺序排列","在线粒体内膜中","的多个蛋白质复合体","，形成一个连续传递电子/氢","或还原当量的","反应链，氧分子最终接受电子和  生成水","。"]} },
+  { id:"P/O ratio", en:{term:"P/O ratio", full:"The number of molecules of  consumed in ATP formation for each oxygen atom reduced to .", chunks:["The number","of molecules","of consumed","in ATP formation","for each oxygen atom reduced","to ."]}, zh:{term:"P/O 比值", full:"氧化磷酸化过程中，每消耗  的  所需磷酸的摩尔数，或所能合成 ATP 的摩尔数 。", chunks:["氧化磷酸化过程中","，每消耗","的  所需磷酸","的摩尔数，或","所能合成 ATP","的摩尔数 。"]} },
+  { id:"Oxidative phosphorylation", en:{term:"Oxidative phosphorylation", full:"The process in which the phosphorylation of ADP to yield ATP is coupled to the electron transport through respiratory chain.", chunks:["The process","in which the phosphorylation","of ADP","to yield ATP is coupled","to the electron transport through respiratory chain."]}, zh:{term:"氧化磷酸化", full:"NADH 和  通过呼吸链逐步失去电子被氧化，电子传递过程伴随着能量的逐步释放，偶联驱动 ADP 磷酸化生成 ATP 。", chunks:["NADH 和  通过呼吸链逐步失去电子被氧化","，电子传递过程伴随着能量","的逐步释放，","偶联驱动 ADP 磷酸化生成 ATP","。"]} },
+  { id:"Uncoupler", en:{term:"Uncoupler", full:"A molecule, such as dinitrophenol/DNP, that uncouples ATP synthesis from electron transport.", chunks:["A molecule, such","as dinitrophenol/DNP,","that uncouples ATP synthesis","from electron transport."]}, zh:{term:"解偶联剂", full:"可使氧化/电子传递与磷酸化的偶联分离的一类分子，比如二硝基苯酚 (DNP) 。", chunks:["可使氧化/电子传递","与磷酸化的偶联分离","的一类分子，","比如二硝基苯酚 (DNP)","。"]} },
+  { id:"Essential fatty acids", en:{term:"Essential fatty acids", full:"The fatty acids, including linoleic acid, linolenic acid, and arachidonic acid, which can not be synthesized in the mammalian body and must be obtained from diet.", chunks:["The fatty acids, including linoleic acid, linolenic acid,","and arachidonic acid,","which can not be synthesized","in the mammalian body","and must be obtained","from diet."]}, zh:{term:"必需脂肪酸", full:"人体内需要而不能自身合成，必须由食物提供的脂肪酸，包括：亚油酸、亚麻酸和花生四烯酸 。", chunks:["人体内需要而","不能自身合成","，必须由食物提供","的脂肪酸，包括：亚油酸","、亚麻酸和花生四烯酸","。"]} },
+  { id:"Mobilization of fat", en:{term:"Mobilization of fat", full:"A process of lipolysis in which the fat stored in adipose tissues is converted to free fatty acids and glycerol, which are consequently released into blood so that they can be used in other tissues.", chunks:["A process","of lipolysis","in which the fat stored","in adipose tissues is converted","to free fatty acids","and glycerol,","which are consequently released","into blood so","that they can be used","in other tissues."]}, zh:{term:"脂肪动员", full:"储存在白色脂肪细胞内的脂肪，被脂肪酶逐步水解为 FFA 和甘油，并释放入血供其他组织细胞氧化利用的过程 。", chunks:["储存在白色脂肪细胞内","的脂肪，被脂肪酶逐步水解","为 FFA 和甘油","，并释放入血供其他组织细胞氧化利用","的过程 。"]} },
+  { id:"Ketone bodies", en:{term:"Ketone bodies", full:"A group of molecules, i.e., acetone, acetoacetate, and -hydroxybutyrate, that are synthesized in the liver from acetyl CoA.", chunks:["A group of molecules,","i.","e.",",","acetone,","acetoacetate,","and -hydroxybutyrate,","that are synthesized in the liver from acetyl CoA."]}, zh:{term:"酮体", full:"在肝内脂肪酸 -氧化产生的大量乙酰 CoA 转变成乙酰乙酸、-羟丁酸和丙酮，后三者统称为酮体 。", chunks:["在肝内脂肪酸 -氧化产生","的大量乙酰 CoA 转变成乙酰乙酸","、-羟丁酸和丙酮","，后三者统称","为酮体 。"]} },
+  { id:"Essential amino acids", en:{term:"Essential amino acids", full:"The amino acids, including valine, leucine, isoleucine, threonine, phenylalanine, tryptophan methionine, lysine and histidine, that cannot be synthesized by animal body and must therefore be supplied by diet.", chunks:["The amino acids,","including valine,","leucine,","isoleucine,","threonine,","phenylalanine,","tryptophan methionine,","lysine and histidine,","that cannot be synthesized by animal body and must therefore be supplied by diet."]}, zh:{term:"必需氨基酸", full:"体内需要而不能自身合成，必须由食物提供的氨基酸，包括：缬氨酸、亮氨酸、异亮氨酸、苏氨酸、苯丙氨酸、色氨酸、甲硫氨酸、赖氨酸和组氨酸 。", chunks:["体内需要而不能自身合成，","必须由食物提供的氨基酸，","包括：缬氨酸、","亮氨酸、","异亮氨酸、","苏氨酸、","苯丙氨酸、","色氨酸、","甲硫氨酸、","赖氨酸和组氨酸 。"]} },
+  { id:"Transamination", en:{term:"Transamination", full:"A reaction catalyzed by an aminotransferase, in which an amino group is transferred from an amino acid to a keto acid.", chunks:["A reaction catalyzed","by an aminotransferase,","in which an amino group is transferred","from an amino acid","to a keto acid."]}, zh:{term:"转氨基作用", full:"在转氨酶的催化下，可逆地将 -氨基酸的氨基转移给 -酮酸 。", chunks:["在转氨酶的催化下","，可逆地将 -氨基酸","的氨基转移给 -酮酸","。"]} },
+  { id:"Ketogenic amino acids", en:{term:"Ketogenic amino acids", full:"The amino acids that can be converted to ketone bodies, i.e., leucine and lysine.", chunks:["The amino acids","that can be converted","to ketone bodies, i.e., leucine","and lysine."]}, zh:{term:"生酮氨基酸", full:"能转变成酮体的氨基酸，包括亮氨酸 (Leu) 和赖氨酸 (Lys) 。", chunks:["能转变成酮体","的氨基酸，包括亮氨酸 (Leu) 和赖氨酸 (Lys)","。"]} },
+  { id:"One carbon units", en:{term:"One carbon units", full:"Organic groups, including methyl(), methylene(), methenyl(), formyl() and formimino() groups, each containing only one carbon atom generated through catabolisms of some amino acids.", chunks:["Organic groups,","including methyl()",",","methylene()",",","methenyl()",",","formyl()","and formimino()","groups,","each containing only one carbon atom generated through catabolisms of some amino acids."]}, zh:{term:"一碳单位", full:"某些氨基酸在分解代谢过程中产生的含有一个碳原子的有机基团，包括甲基 ()、亚甲基 ()、次甲基 ()、甲酰基 () 及亚氨甲基 () 等 。", chunks:["某些氨基酸在分解代谢过程中产生的含有一个碳原子的有机基团，","包括甲基 ()","、","亚甲基 ()","、","次甲基 ()","、","甲酰基 ()","及亚氨甲基 ()","等 。"]} },
+  { id:"De novo synthesis", en:{term:"De novo synthesis", full:"A pathway through which nucleotides are synthesized by using simple molecules, such as ribose 5-phosphate, amino acids, one carbon units and carbon dioxide.", chunks:["A pathway through","which nucleotides are synthesized","by using simple molecules, such","as ribose 5-phosphate, amino acids, one carbon units","and carbon dioxide."]}, zh:{term:"从头合成途径", full:"生物体内利用磷酸核糖、氨基酸、一碳单位及  等简单物质为原料，经过一系列酶促反应，合成嘌呤核苷酸 。", chunks:["生物体内利用磷酸核糖","、氨基酸、一碳单位及  等简单物质","为原料，经过一系列酶促反应","，合成嘌呤核苷酸","。"]} },
+  { id:"Salvage pathway", en:{term:"Salvage pathway", full:"A pathway through which nucleotides are synthesized by using the existing nitrogenous bases or nucleosides.", chunks:["A pathway through","which nucleotides are synthesized","by using the existing nitrogenous bases","or nucleosides."]}, zh:{term:"补救合成途径", full:"利用体内游离的嘌呤或嘌呤核苷，经过简单的反应过程，合成嘌呤核苷酸 。", chunks:["利用体内游离","的嘌呤或嘌呤核苷","，经过简单的","反应过程，合成嘌呤核苷酸","。"]} },
+  { id:"Allosteric regulation", en:{term:"Allosteric regulation", full:"A regulatory mechanism through which a specific low-molecular-weight molecule, called an effector or a modulator, noncovalently binds to a regulatory site outside the active center of a regulatory enzyme and alters the conformation and activity of the enzyme.", chunks:["A regulatory mechanism through","which a specific low-molecular-weight molecule, called an effector","or a modulator, noncovalently binds","to a regulatory site outside the active center","of a regulatory enzyme","and alters the conformation","and activity","of the enzyme."]}, zh:{term:"别构调节", full:"小分子化合物与酶蛋白分子活性中心外的特定部位非共价可逆结合，改变酶蛋白分子构象，从而改变酶的活性 。", chunks:["小分子化合物","与酶蛋白分子活性中心外","的特定部位非共价可逆结合","，改变酶蛋白分子构象","，从而改变酶","的活性 。"]} },
+  { id:"Chemical modification", en:{term:"Chemical modification", full:"A regulatory mechanism through which enzyme activities are regulated by means of reversible interconversion between the active and inactive forms of the enzyme resulted from enzyme-catalyzed covalent modification to a specific amino acid residue.", chunks:["A regulatory mechanism through","which enzyme activities are regulated","by means","of reversible interconversion between the active","and inactive forms","of the enzyme resulted","from enzyme-catalyzed covalent modification","to a specific amino acid residue."]}, zh:{term:"化学修饰调节", full:"酶蛋白肽链上某些氨基酸残基在另一酶的催化下发生可逆的共价修饰，从而改变酶活性，又称共价修饰调节 。", chunks:["酶蛋白肽链上某些氨基酸残基","在另一酶的催化下发生可逆","的共价修饰，","从而改变酶活性","，又称共价修饰调节","。"]} },
+  { id:"Semiconservative replication", en:{term:"Semiconservative replication", full:"Duplication of DNA after which the daughter duplex carries one parental strand and one newly synthesized strand.", chunks:["Duplication","of DNA after","which the daughter duplex carries one parental strand","and one newly synthesized strand."]}, zh:{term:"半保留复制", full:"DNA 复制时，子代 DNA 中一条链来自母链，一条链来自新合成 。", chunks:["DNA 复制","时，子代 DNA 中一条链来自母链","，一条链来自新合成","。"]} },
+  { id:"Okazaki fragment", en:{term:"Okazaki fragment", full:"DNA replication is semi-continuous. The newly synthesized lagging strand exists as small fragments called Okazaki fragment.", chunks:["DNA replication is semi-continuous. The newly synthesized lagging strand exists","as small fragments called Okazaki fragment."]}, zh:{term:"冈崎片段", full:"DNA 复制时，沿着后随链的模板链合成新的不连续的 DNA 片段 。", chunks:["DNA 复制","时，沿着后随链","的模板链合成新","的不连续的 DNA 片段","。"]} },
+  { id:"Reverse transcription", en:{term:"Reverse transcription", full:"The synthesis of a double-stranded DNA from an RNA template. It is catalyzed by a reverse transcriptase.", chunks:["The synthesis","of a double-stranded DNA","from an RNA template. It is catalyzed","by a reverse transcriptase."]}, zh:{term:"逆转录", full:"以 RNA 为模板，在逆转录酶的催化作用下合成 DNA 的过程 。", chunks:["以 RNA","为模板，在逆转录酶","的催化作用下合成 DNA","的过程 。"]} },
+  { id:"Ribozyme", en:{term:"Ribozyme", full:"Ribonucleic acid with catalytic ability whose substrate is ribonucleic acid.", chunks:["Ribonucleic acid","with catalytic ability whose substrate is ribonucleic acid."]}, zh:{term:"核酶", full:"具有催化功能的 RNA 分子 。", chunks:["具有催化功能","的 RNA 分子","。"]} },
+  { id:"Codon", en:{term:"Codon", full:"A group of three adjacent nucleotides on the mRNA, which encodes an amino acid or the initiation/termination of peptide synthesis.", chunks:["A group","of three adjacent nucleotides on the mRNA,","which encodes an amino acid","or the initiation/termination","of peptide synthesis."]}, zh:{term:"密码子", full:"在 mRNA 的可读框区域，每 3 个相邻的核苷酸为一组，编码一种氨基酸或肽链合成的起始/终止信息 。", chunks:["在 mRNA","的可读框区域","，每 3 个相邻","的核苷酸为一组","，编码一种氨基酸","或肽链合成的","起始/终止信息","。"]} },
+  { id:"Degeneracy", en:{term:"Degeneracy", full:"The phenomenon that the same amino acid has two or more codons.", chunks:["The phenomenon","that the same amino acid has two","or more codons."]}, zh:{term:"简并性", full:"同一种氨基酸具有两个或更多个密码子的现象 。", chunks:["同一种氨基酸具有两个","或更多个密码子","的现象 。"]} },
+  { id:"Secondary messenger", en:{term:"Secondary messenger", full:"A small intracellular molecule, such as , cAMP, cGMP, DAG, , etc., that is formed at the inner surface of the plasma membrane in response to a primary messenger.", chunks:["A small intracellular molecule,","such as ,","cAMP,","cGMP,","DAG,",",","etc.",",","that is formed at the inner surface of the plasma membrane in response to a primary messenger."]}, zh:{term:"第二信使", full:"细胞内传递信号的小分子，如 、cAMP、cGMP、DAG、 等 。", chunks:["细胞内传递信号","的小分子，如","、cAMP、","cGMP、DAG","、 等 。"]} },
+  { id:"G protein / Guanylate binding proteins", en:{term:"G protein / Guanylate binding proteins", full:"A trimeric guanylate binding protein in the cytoplasmic side of plasma membrane that acts as a switch to turn activities on and off by interconversion between its monomeric GTPase and trimeric GDP binding form.", chunks:["A trimeric guanylate binding protein","in the cytoplasmic side","of plasma membrane","that acts","as a switch","to turn activities on","and off","by interconversion between its monomeric GTPase","and trimeric GDP binding form."]}, zh:{term:"G 蛋白 / 鸟苷酸结合蛋白", full:"位于细胞质膜内侧的蛋白质，结合 GTP 时被激活，作用于下游分子 。", chunks:["位于细胞质膜内侧","的蛋白质，结合 GTP","时被激活，作用于下游分子","。"]} },
+  { id:"Biotransformation", en:{term:"Biotransformation", full:"A series of enzyme-catalyzed processes through which non-nutritional molecules, which are usually hydrophobic, are converted into more soluble metabolites.", chunks:["A series","of enzyme-catalyzed processes through","which non-nutritional molecules,","which are usually hydrophobic, are converted","into more soluble metabolites."]}, zh:{term:"生物转化", full:"非营养物质在排出体外之前，机体对它们进行代谢转变，使其水溶性提高，极性增强，易于通过胆汁或尿液排出体外的过程 。", chunks:["非营养物质在","排出体外之前","，机体对它们进行代谢转变","，使其水溶性提高","，极性增强，","易于通过胆汁","或尿液排出体外","的过程 。"]} },
+  { id:"Bile pigment", en:{term:"Bile pigment", full:"Catabolic products of iron-containing porphyrins in vivo, including bilirubin, biliverdin, bilinogen, and bilin.", chunks:["Catabolic products","of iron-containing porphyrins","in vivo, including bilirubin, biliverdin, bilinogen,","and bilin."]}, zh:{term:"胆色素", full:"体内铁卟啉化合物的主要分解代谢产物，包括胆红素、胆绿素、胆素原和胆素 。", chunks:["体内铁卟啉化合物","的主要分解代谢产物","，包括胆红素","、胆绿素、胆素原和胆素","。"]} }
+];
+
+const STATS_KEY = "biochem_stats_v5";
+const ATTEMPTS_KEY = "biochem_attempts_v5";
+const ANSWERMODE_KEY = "biochem_answer_mode_v5";
+
+// AI grading settings (stored locally)
+const AI_KEY = "biochem_ai_key_v1";
+const AI_BASE = "biochem_ai_base_v1";
+const AI_MODEL = "biochem_ai_model_v1";
+const AI_ENABLED = "biochem_ai_enabled_v1";
+const AI_PASS = "biochem_ai_pass_v1";
+const AI_RUBRIC = "biochem_ai_rubric_v1";
+
+// Official rubric text (from Biochem Teaching & Research Office PDF)
+const OFFICIAL_RUBRIC_TEXT = '第一章蛋白质的结构与功能刘灿华\nChapter1StructureandFunctionofProtein\npeptidebond（肽键）：aamidobond(1分)linkingtheα-aminogroup(1分)ofoneaminoacid\nandtheα-carboxylgroup(1分)ofanotherinapeptideorprotein(1分)molecule.\n在肽或蛋白质分子中连接一个氨基酸的α-氨基(1分)和另一个氨基酸的α-羧基(1分)的酰胺键\n(1分)。\nproteinprimarystructure（蛋白质的一级结构）：thelinearsequenceofaminoacids(2分)ina\nproteinstartingfromtheamino-terminal(N)end(1分)tothecarboxyl-terminal(C)end(1分).\n蛋白质分子中从N端(1分)至C端(1分)的氨基酸排列顺序(1分)。\nproteinsecondarystructure（蛋白质的二级结构）：thespatialarrangement(1分)oflocal\nportions(1分)ofapolypeptidechainofaprotein(1分),e.g.alphahelices,betasheets,betaturns\nandomegaloops,etc.(4举2就给1分).\n蛋白质分子中某一段肽链的局部(1分)空间结构(1分)，如α-螺旋、β-折叠、β-转角和无规卷\n曲(4举2就给1分)。\ndomain（结构域）：aregionofaprotein(1分)thatcanfold,function(1分)andexistindependently\n(1分)oftherestoftheproteinchainorstructure(1分).\n分子量较大的蛋白质(1分)常可折叠成多个结构较为紧密且稳定的区域(1分)，并各行其功能\n(1分)，称为结构域。\nisoelectricpoint（pI）ofprotein（蛋白质的等电点）：thepH(1分)atwhichaproteinhasanequal\nnumberofpositiveandnegativecharges(2分)andhencebearsnonetcharge(1分).\n蛋白质溶液处于某一pH值(1分)时，蛋白质解离成正负离子的趋势相等(1分)，即成为兼性\n离子，净电荷为零(1分)，此时溶液的pH值称为蛋白质的等电点。\ndenaturationofprotein（蛋白质变性）：aprocessinwhichthefoldingstructureofaproteinis\naltered(2分)duetoexposuretocertainchemicalorphysicalfactors(1分)(e.g.heat,acid,solvents,\netc.),causingalterationofchemical,physicalandbiologicalpropertiesoftheprotein(1分).\n某些物理和化学因素(1分)作用下，蛋白质特定的空间结构被破坏(1分)，即有序的空间结构\n变成无序的空间结构，从而导致其理化性质的改变和生物学活性的丧失(1分)。\n第二章核酸的结构与功能陈苗\nChapter2StructureandFunctionofNucleicAcid\ndenaturationofDNA（DNA的变性）：thedisruptionofthenativeconformationofDNA（1）\nbyseparationoftheDNAdoublehelix（1）intoitstwocomponentstrands（1）,duetoheat,\n\nchemicals,orchangeinpH,etc（1）.\n在某些理化因素作用下（1），DNA双链的互补碱基对之间的氢键断裂（1），使双链DNA\n解离为单链（1）。\nhyperchromiceffect（增色效应）：theincrease（1）inultravioletabsorbanceofaDNAat260\nnm（1）whiletheDNA（1）isdenatured（1）.\n在DNA解链过程中（1），有更多的包埋在双螺旋结构内部的碱基得以暴露（1），DNA溶\n液在260nm处的吸光度随之增加（1），这种现象称为DNA的增色效应。\nmeltingtemperature（Tm,融解温度）：thetemperature（1）correspondingtohalfthemaximal\nincrease（1）inultravioletabsorbance（1）ofathermallydenaturedDNA（1）.\n在DNA解链过程中（1），紫外吸光度的变化（1）达到最大变化值的一半时所对应的温度\n（1）。\nannealing（退火）：theprocessofreturning（1）athermallydenaturedDNA（1）toitsoriginal\nnativestructure（1）whenitiscooledgradually（1）.\n热变性的DNA（1）经过缓慢冷却后（1）即可复性（1），这一过程称为退火。\n第三章酶邓梅春\nChapter3Enzymes\nholoenzyme（全酶）：acompleteenzyme（1）consistingoftheapoenzymeportion（1.5）plus\nthecofactorcomponent（1.5）.\n由酶蛋白（1）和辅因子（1）共同构成的酶（1）。\nessentialgroup（必需基团）：achemicalgroup（1）onthesidechainofaminoacidresidue（1）\nofanenzyme（1）thatiscloselyrelatedtotheactivityoftheenzyme（1）.\n间接或直接与酶催化活性相关（1）的多肽链上某些氨基酸残基（1）的功能基团（1）。\nactivecenter/activesite（活性中心）：theregionofanenzymemolecule（1）thatcontainsthe\nsubstratebindingsite（1）andthecatalyticsite（1）forconvertingthesubstrate(s)intoproduct(s)\n（1）.\n酶分子中的必需基团在空间结构上彼此靠近（1），组成具有特定空间结构的区域（1），它能\n与底物特异结合并将底物转化为产物（1）。\nzymogenactivation（酶原激活）：theprocessinwhichazymogen（1）isconvertedtoanactive\nenzyme（1）bylimitedproteolysis（1）andsubsequentlytheactivecenteroftheenzymeisformed\norexposed（1）.\n在一定条件下，无活性的酶原（1）向有催化活性的酶转化的过程（1），实则是酶活性中心\n的形成或暴露的过程（1）。\nisoenzyme（同工酶）：multipleformsofanenzyme（1）thatcatalyzethesamereaction（1）\n\nbutdifferfromoneanotherinoneormoreoftheproperties（1）,suchasstructural,physical,\nchemicalandevenimmunologicalproperties（1）\n催化相同的化学反应（1），但酶蛋白的分子结构、理化性质乃至免疫学性质不同（1）的一\n组酶（1）。\n第五章糖代谢龙苏\nChapter5CarbohydrateMetabolism\nglycolysis（糖酵解）：thedegradationofcarbohydrate（1分）wherebyamoleculeofglucose\n（1分）isconverted（1分）totwomoleculesofpyruvate.（1分）.\n一分子葡萄糖（1分）在细胞质中裂解（1分）为两分子丙酮酸（1分）的过程，称为糖酵\n解。\nsubstrate-levelphosphorylation（底物水平磷酸化）：thesynthesisofATPfromADPbythe\nphosphorylationofADP（1分）coupled（1分）withexergonicbreakdown（1分）ofa\nhigh-energyorganicsubstratemolecules（1分）.\nADP(GDP)的磷酸化作用（1分）与高能化合物的高能键水解（1分）直接相偶联（1分）的\n产能方式，称为底物水平磷酸化。\nPastuereffect（巴斯德效应）：thephenomenonthattheglycolyticpathway（1分）isinhibited\n（2分）underaerobicconditions（1分）.\n糖的有氧氧化（1分）抑制（1分）无氧分解（1分）的现象，称为巴斯德效应。\ngluconeogenesis（糖异生）：thesynthesisofglucose（1分）orglycogen（1分）from\nnoncarbohydratemolecule（1分）s,i.e.,lacticacid,glycerol,glucogenicaminoacids,etc（1\n分）.\n由非糖化合物（1分）（乳酸、甘油、生糖氨基酸等（举例一个1分））转变为葡萄糖或糖原\n（1分）的过程，称为糖异生。\nWarburgeffect(瓦伯格效应)：\nCancercells（1分）tendtoconvertmostglucosetolactate（1分）viaglycolysis（1分）\nregardlessofwhetheroxygenispresent（1分）.\n肿瘤等增殖活跃的组织（1分）在有氧条件下（1分），葡萄糖被分解生成乳酸（1分）的现\n象。\n第六章生物氧化刘--钟慧\nChapter6BiologicalOxidation\nrespiratorychain（呼吸链）/electrontransferchain（电子传递链）：\naseriesofelectroncarriers(1分)responsibleforthetransportofreducingequivalent(1分)from\nmetabolitetomolecularoxygen,withthenetresultsofcapturingenergyforuseinATPsynthesis(1\n\n分),andofthereductionofoxygentowater(1分)\n按一定顺序排列在线粒体内膜((1分)中的多个蛋白质复合体，形成一个连续传递电子/氢或\n还原当量(1分)的反应链，氧分子最终接受电子和H+生成水（1分），这种具有传递电子能\n力的多个蛋白质复合体称为呼吸链，也称为电子传递链。\nP/Oratio（P/O比值）：thenumberofmoleculesofPi(2分)consumedinATPformation(1\n分)foreachoxygenatomreducedtoH2O(1分).\n氧化磷酸化过程中(1分)，每消耗1/2mol的O2(1分)所需磷酸的摩尔数，或所能合成ATP的\n摩尔数(答所需磷酸或合成ATP的摩尔数都给1分)。\noxidativephosphorylation（氧化磷酸化）：theprocessinwhichthephosphorylationofADPto\nyieldATP(2分)iscoupled(1分)totheelectrontransportthroughrespiratorychain(1分).\nNADH和FADH2通过呼吸链逐步失去电子被氧化(1分)，电子传递过程伴随着能量的逐步释\n放，偶联驱动(1分)ADP磷酸化生成ATP(1分)。\nuncoupler（解偶联剂）：amolecule,suchasdinitrophenol/DNP(1分),thatuncouples(1分)ATP\nsynthesis(1分)fromelectrontransport(1分).\n可使氧化/电子传递(1分)与磷酸化(1分)的偶联分离(1分)的一类分子，比如二硝基苯酚\n（DNP）。\n第七章脂质代谢陈淑华\nChapter7LipidMetabolism\nessentialfattyacids（必需脂肪酸）：thefattyacids,includinglinoleicacid,linolenicacid,and\narachidonicacid（2）,whichcannotbesynthesizedinthemammalianbody（1）andmustbe\nobtainedfromdiet（1）.\n人体内需要而不能自身合成（1），必须由食物提供的脂肪酸（1），包括：亚油酸、亚麻酸\n和花生四烯酸（1）。\nmobilizationoffat（脂肪动员）：aprocessoflipolysis（1）inwhichthefatstoredinadipose\ntissues（1）isconvertedtofreefattyacidsandglycerol（1）,whichareconsequentlyreleased\nintobloodsothattheycanbeusedinothertissues（1）.\n储存在白色脂肪细胞内的脂肪（1），被脂肪酶逐步水解为FFA和甘油（1），并释放入血\n供其他组织细胞氧化利用的过程（1）。\nketonebodies（酮体）：agroupofmolecules,i.e.,acetone,acetoacetate,andβ–hydroxybutyrate\n（2）,thataresynthesizedintheliver（1）fromacetylCoA（1）.\n在肝内（1）脂肪酸β-氧化产生的大量乙酰CoA（1）转变成乙酰乙酸、β-羟丁酸和丙酮（1），\n后三者统称为酮体。\n第八章氨基酸代谢陈淑华\nChapter8AminoAcidMetabolism\n\nessentialaminoacids（必需氨基酸）：theaminoacids，includingvaline,leucine,isoleucine,\nthreonine,phenylalanine,tryptophanmethionine,lysineandhistidine（2）,thatcannotbe\nsynthesizedbyanimalbody（1）andmustthereforebesuppliedbydiet（1）.\n体内需要而不能自身合成（1），必须由食物提供的氨基酸（1），包括：缬氨酸、亮氨酸、\n异亮氨酸、苏氨酸、苯丙氨酸、色氨酸、甲硫氨酸、赖氨酸和组氨酸（1）。\ntransamination（转氨基作用）：areactioncatalyzedbyanaminotransferase（1）,inwhichan\naminogroup（1）istransferredfromanaminoacid（1）toaketoacid（1）.\n在转氨酶的催化下（1），可逆地将ɑ-氨基酸的氨基（1）转移给ɑ-酮酸（1）。\nketogenicaminoacids（生酮氨基酸）：theaminoacidsthatcanbeconvertedtoketonebodies(2),\ni.e.,leucine(1)andlysine(1).\n能转变成酮体（1）的氨基酸，包括亮氨酸(Leu)（1）和赖氨酸(Lys)（1）。\nonecarbonunits（一碳单位）：organicgroups(1),includingmethyl(—CH3),methylene(—CH2\n—),methenyl(—CH＝),formyl(—CHO)andformimino(—CH＝NH)groups(1),each\ncontainingonlyonecarbonatom(1)generatedthroughcatabolismsofsomeaminoacids(1).\n某些氨基酸在分解代谢（1）过程中产生的含有一个碳原子的有机基团（1），包括甲基(—\nCH3)、亚甲基(—CH2—)、次甲基(—CH＝)、甲酰基(—CHO)及亚氨甲基(—CH＝NH)等（1）。\n第九章核苷酸代谢骆亚萍\nChapter9NucleotideMetabolism\ndenovosynthesis（从头合成途径）：apathwaythroughwhichnucleotidesaresynthesized（1\n分）byusingsimplemolecules（1分）,suchasribose5-phosphate,aminoacids,onecarbonunits\nandcarbondioxide（2分）.\n生物体内利用磷酸核糖、氨基酸、一碳单位及CO2（1分）等简单物质为原料（1分），经\n过一系列酶促反应（1分），合成嘌呤核苷酸。\nsalvagepathway（补救合成途径/重新利用途径）：apathwaythroughwhichnucleotidesare\nsynthesized（1分）byusingtheexisting（1分）nitrogenousbases（1分）ornucleosides\n（1分）.\n利用体内游离的嘌呤（1分）或嘌呤核苷（1分），经过简单的反应过程（1分），合成嘌\n呤核苷酸。\n第十章代谢的整合与调节何海伦\nChapter10IntegrationandRegulationofMetabolism\n\nallostericregulation（别构调节）：aregulatorymechanismthroughwhichaspecific\nlow-molecular-weightmolecule,（1分）calledaneffectororamodulator（1分）,noncovalently\nbindstoaregulatorysiteoutsidetheactivecenterofaregulatoryenzyme（1分）andaltersthe\nconformationandactivityoftheenzyme.（1分）\n小分子化合物（1分）与酶蛋白分子活性中心外的特定部位非共价可逆结合（1分），改变\n酶蛋白分子构象，从而改变酶的活性（1分）。\nchemicalmodification（化学修饰调节）：aregulatorymechanismthroughwhichenzyme\nactivitiesareregulatedbymeansofreversibleinterconversion（1分）betweentheactiveand\ninactiveformsoftheenzyme（1分）resultedfromenzyme-catalyzedcovalentmodification（1\n分）toaspecificaminoacidresidue.（1分）\n酶蛋白肽链上某些氨基酸残基（1分）在另一酶的催化下发生可逆的共价修饰（1分），从\n而改变酶活性（1分），这种调节称为化学修饰调节，又称共价修饰调节。\n第十二章DNA的合成（复制）汤--马昌杯\nChapter12BiosynthesisofDNA(Replication)\nsemiconservativereplication（半保留复制)：duplicationofDNA(1)afterwhichthedaughter\nduplex(1)carriesoneparentalstrand(1)andonenewlysynthesizedstrand(1).\nDNA复制时(1),子代DNA中一条链来自母链(1),一条链来自新合成(1)。\nOkazakifragment(冈崎片断):DNAreplicationissemi-continuous(1).Thenewlysynthesized\nlaggingstrand(1)existsassmallfragments(2)calledOkazakifragment.\nDNA复制时,沿着后随链的模板链(1)合成新的不连续的(1)DNA片段(1)。\nreversetranscription(逆转录):thesynthesisofadouble-strandedDNA(1)fromanRNA\ntemplate(1).Itiscatalyzedbyareversetranscriptase(2).\n以RNA为模板(1),在逆转录酶(1)的催化作用下合成DNA(1)的过程。\n第十四章RNA的合成（转录）龙苏\nChapter14BiosynthesisofRNA(Transcription)\nribozyme（核酶）：ribonucleicacid（2分）withcatalyticability（2分）whosesubstrateis\nribonucleicacid.\n具有催化功能（1.5分）的RNA分子（1.5分）。\n第十五章蛋白质的合成（翻译）马昌杯\nChapter15BiosynthesisofProteins(Translation)\n\ncodon(密码子):agroupofthreeadjacentnucleotides(1)onthemRNA(1),which\nencodesanaminoacid(1)ortheinitiation/terminationofpeptidesynthesis(1).\n在mRNA的可读框区域(1),每3个相邻的核苷酸为一组(1),编码一种氨基酸或肽链合成\n的起始/终止信息(1)。\ndegeneracy(简并性):thephenomenon(1)thatthesameaminoacid(1)hastwoormorecodons\n(2).\n同一种氨基酸(1)具有两个或更多个密码子(2)的现象。\n第十七章细胞信号转导朱飞舟\nChapter17CellSignaling\nsecondarymessenger（第二信使）：asmallintracellularmolecule（2）,suchasCa2+,cAMP,\ncGMP,diacylglycerol(DAG),inositoltriphosphate(IP3),ceramide,orarachidonicacid(AA),\netc.,（1，举例一个以上）thatisformedattheinnersurfaceoftheplasmamembranein\nresponsetoaprimarymessenger（1）.\n细胞内（1）传递信号的小分子（1），如Ca2+、cAMP、cGMP、DAG、IP3（1，举例一个\n以上）等。\nGprotein（G蛋白）/guanylatebindingproteins（鸟苷酸结合蛋白）：atrimericguanylate\nbindingprotein（1）inthecytoplasmicsideofplasmamembrane（1）thatactsasaswitchto\nturnactivitiesonandoffbyinterconversionbetweenitsmonomericGTPaseandtrimericGDP\nbindingform（1），affectingdownstreammoleculars（1）.\n位于细胞质膜内侧的蛋白质（1），结合GTP时被激活（1），作用于下游分子（1）。\n第十九章肝的生物化学马昌杯\nChapter19BiochemicalAspectsoftheLiver\nbiotransformation（生物转化）：aseriesofenzyme-catalyzedprocesses(1)throughwhich\nnon-nutritionalmolecules(1),whichareusuallyhydrophobic,areconvertedintomoresoluble\nmetabolites(2).\n非营养物质（1分）在排出体外之前，机体对它们进行代谢转变（1分），使其水溶性提高，\n极性增强（1分），易于通过胆汁或尿液排出体外的过程。\nBilepigment（胆色素）:catabolicproducts(1)ofiron-containingporphyrinsinvivo(2),\nincludingbilirubin,biliverdin,bilinogen,andbilin(1).\n体内铁卟啉化合物(1)的主要分解代谢产物(1)，包括胆红素、胆绿素、胆素原和胆素(1,举\n例一个以上)。';
+
+function loadJSON(key, fallback){ try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }catch(e){ return fallback; } }
+function saveJSON(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+
+function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function weightedPick(items, weights){ const total=weights.reduce((x,y)=>x+y,0); let r=Math.random()*total; for(let i=0;i<items.length;i++){ r-=weights[i]; if(r<=0) return items[i]; } return items[items.length-1]; }
+function nowStr(ts){ return new Date(ts).toLocaleString(); }
+function normalizeAnswer(s){ return (s||"").replace(/\s+/g," ").trim(); }
+
+
+async function gradeWithAI({term, gold, user, lang, baseUrl, apiKey, model, rubricText}){
+  const system = (lang==="zh")
+    ? "你是严格但公平的生物化学名词解释阅卷老师。请只输出JSON，不要输出多余文本。"
+    : "You are a strict but fair biochemistry definition grader. Output JSON only, no extra text.";
+  const rubric = rubricText && rubricText.trim()
+    ? ((lang==="zh") ? ("评分标准：\n"+rubricText.trim()) : ("Rubric:\n"+rubricText.trim()))
+    : ((lang==="zh") ? "评分标准：按语义等价、关键点覆盖、表述准确性评分。" : "Rubric: grade semantic equivalence, key-point coverage, and accuracy.");
+  const prompt = (lang==="zh")
+    ? `请给“${term}”的名词解释打分（0-100）。\n标准答案：${gold}\n学生答案：${user}\n${rubric}\n\n要求：\n1) 只返回JSON：{"score":number,"verdict":"pass"|"fail","feedback":"...","missing_points":["..."]}\n2) score为整数，feedback不超过80字，missing_points最多5条。`
+    : `Grade the definition for "${term}" (0-100).\nGold: ${gold}\nStudent: ${user}\n${rubric}\n\nReturn JSON only: {"score":number,"verdict":"pass"|"fail","feedback":"...","missing_points":["..."]}. score must be integer; feedback <= 80 chars; missing_points <= 5.`;
+
+  const url = baseUrl.replace(/\/$/,"") + "/chat/completions";
+  const body = {
+    model: model,
+    messages: [
+      {role:"system", content: system},
+      {role:"user", content: prompt}
+    ],
+    temperature: 0.2,
+    max_tokens: 300
+  };
+
+  const resp = await fetch(url, {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization":"Bearer "+apiKey
+    },
+    body: JSON.stringify(body)
+  });
+  if(!resp.ok){
+    const t = await resp.text().catch(()=> "");
+    throw new Error("HTTP "+resp.status+" "+resp.statusText+" "+t.slice(0,200));
+  }
+  const data = await resp.json();
+  const content = data?.choices?.[0]?.message?.content ?? "";
+  let jsonText = content.trim();
+  jsonText = jsonText.replace(/^```json\s*/i,"").replace(/```$/,"").trim();
+  const firstBrace = jsonText.indexOf("{");
+  const lastBrace = jsonText.lastIndexOf("}");
+  if(firstBrace>=0 && lastBrace>firstBrace) jsonText = jsonText.slice(firstBrace, lastBrace+1);
+  const out = JSON.parse(jsonText);
+  return {raw: content, parsed: out};
+}
+
+
+let answerMode = localStorage.getItem(ANSWERMODE_KEY) || "en_order";
+let lang = answerMode.startsWith("zh_") ? "zh" : "en";
+let mode = answerMode.endsWith("_type") ? "type" : "order";
+
+let stats = loadJSON(STATS_KEY, {});
+
+let aiBase = localStorage.getItem(AI_BASE) || "https://api.siliconflow.cn/v1";
+let aiModel = localStorage.getItem(AI_MODEL) || "Qwen/Qwen2.5-72B-Instruct";
+let aiKey = localStorage.getItem(AI_KEY) || "";
+let aiEnabled = (localStorage.getItem(AI_ENABLED) || "0") === "1";
+let aiPassScore = parseInt(localStorage.getItem(AI_PASS) || "85", 10);
+let rubricText = localStorage.getItem(AI_RUBRIC) || OFFICIAL_RUBRIC_TEXT || "";
+
+let attempts = loadJSON(ATTEMPTS_KEY, []);
+let current=null, pool=[], answer=[], locked=false;
+
+const answerModeSel=document.getElementById("answerModeSel");
+const elTerm=document.getElementById("term");
+const elFull=document.getElementById("full");
+const elChoices=document.getElementById("choices");
+const elAnswer=document.getElementById("answerChips");
+const elFeedback=document.getElementById("feedback");
+const elStats=document.getElementById("stats");
+
+const orderArea=document.getElementById("orderArea");
+const typingArea=document.getElementById("typingArea");
+const orderBtns=document.getElementById("orderBtns");
+const typeBtns=document.getElementById("typeBtns");
+const typeInput=document.getElementById("typeInput");
+
+const modal=document.getElementById("modal");
+const attemptCount=document.getElementById("attemptCount");
+const attemptList=document.getElementById("attemptList");
+
+const lblTerm=document.getElementById("lblTerm");
+const lblAns=document.getElementById("lblAns");
+const lblChoices=document.getElementById("lblChoices");
+const lblStats=document.getElementById("lblStats");
+const lblRule=document.getElementById("lblRule");
+const lblHistTitle=document.getElementById("lblHistTitle");
+const lblHistSub=document.getElementById("lblHistSub");
+
+function viewOf(item){ return lang === "zh" ? item.zh : item.en; }
+function statKey(item){ return item.id; }
+function ensureStats(key){ if(!stats[key]) stats[key] = {correct:0, wrong:0, seen:0}; return stats[key]; }
+
+function applyUI() {
+  answerModeSel.value = answerMode;
+
+  if(lang === "zh") {
+    lblTerm.textContent = "当前术语";
+    lblAns.textContent = (mode==="type") ? "你的答案（打字）" : "你的答案（选词排序）";
+    lblChoices.textContent = "短语区（点击加入答案）";
+    lblStats.textContent = "答题统计（本地）";
+    lblRule.textContent = "权重规则：基础 1 + 错误次数×2；出现次数少（<3）的也会略微加权。";
+    lblHistTitle.textContent = "答题记录";
+    lblHistSub.innerHTML = '最近 <span id="attemptCount">'+attempts.length+'</span> 条（最多保存 300 条）';
+    document.getElementById("btnSettings").textContent = "AI打分设置";
+    document.getElementById("btnHistory").textContent = "答题记录";
+    document.getElementById("btnNext").textContent = "下一题";
+    document.getElementById("btnClear").textContent = "清空统计";
+    document.getElementById("btnUndo").textContent = "撤销";
+    document.getElementById("btnReset").textContent = "重置";
+    document.getElementById("btnSubmit").textContent = "提交";
+    document.getElementById("btnTypeClear").textContent = "清空";
+    document.getElementById("btnTypeSubmit").textContent = "提交";
+    document.getElementById("btnClearAttempts").textContent = "清空记录";
+    document.getElementById("btnClose").textContent = "关闭";
+    document.getElementById("typeHint").textContent = "判分规则：忽略多余空格（连续空白会自动合并），其余字符需一致。";
+  } else {
+    lblTerm.textContent = "Term";
+    lblAns.textContent = (mode==="type") ? "Your answer (typing)" : "Your answer (ordering)";
+    lblChoices.textContent = "Phrases (click to add)";
+    lblStats.textContent = "Stats (local)";
+    lblRule.textContent = "Weight: base 1 + wrong×2; low exposure (<3) gets a small boost.";
+    lblHistTitle.textContent = "History";
+    lblHistSub.innerHTML = 'Last <span id="attemptCount">'+attempts.length+'</span> (max 300)';
+    document.getElementById("btnSettings").textContent = "AI settings";
+    document.getElementById("btnHistory").textContent = "History";
+    document.getElementById("btnNext").textContent = "Next";
+    document.getElementById("btnClear").textContent = "Reset stats";
+    document.getElementById("btnUndo").textContent = "Undo";
+    document.getElementById("btnReset").textContent = "Reset";
+    document.getElementById("btnSubmit").textContent = "Submit";
+    document.getElementById("btnTypeClear").textContent = "Clear";
+    document.getElementById("btnTypeSubmit").textContent = "Submit";
+    document.getElementById("btnClearAttempts").textContent = "Clear history";
+    document.getElementById("btnClose").textContent = "Close";
+    document.getElementById("typeHint").textContent = "Grading: extra whitespace is ignored (collapsed). Other characters must match.";
+  }
+
+  if(mode === "type") {
+    orderArea.style.display = "none";
+    typingArea.style.display = "block";
+    orderBtns.style.display = "none";
+    typeBtns.style.display = "flex";
+  } else {
+    orderArea.style.display = "block";
+    typingArea.style.display = "none";
+    orderBtns.style.display = "flex";
+    typeBtns.style.display = "none";
+  }
+}
+
+function renderQuiz() {
+  if(!current) return;
+  const v = viewOf(current);
+  elTerm.textContent = v.term;
+
+  if(!locked) {
+    elFull.textContent = (lang==="zh") ? "（句子已隐藏，提交后显示）" : "(Sentence hidden. Shown after submit.)";
+    elFull.classList.add("masked");
+  } else {
+    elFull.textContent = v.full;
+    elFull.classList.remove("masked");
+  }
+
+  // order mode
+  elAnswer.innerHTML = "";
+  if(mode === "order") {
+    if(answer.length === 0) {
+      const span = document.createElement("span");
+      span.className = "small";
+      span.textContent = (lang==="zh") ? "从下方短语区开始点击…" : "Start by clicking phrases below…";
+      elAnswer.appendChild(span);
+    } else {
+      answer.forEach((c,i)=>{
+        const chip=document.createElement("span");
+        chip.className="chip dark";
+        chip.textContent = (i+1)+". "+c;
+        elAnswer.appendChild(chip);
+      });
+    }
+
+    elChoices.innerHTML = "";
+    pool.forEach(c=>{
+      const btn=document.createElement("button");
+      btn.className="choice";
+      btn.textContent=c;
+      btn.disabled=locked;
+      btn.onclick=()=>pickChunk(c);
+      elChoices.appendChild(btn);
+    });
+  } else {
+    // typing mode: just keep textarea
+    if(!locked) typeInput.value = "";
+  }
+}
+
+function renderStats() {
+  const rows = BANK.map(item=>{
+    const k = statKey(item);
+    const s = stats[k] || {correct:0, wrong:0, seen:0};
+    const acc = s.seen ? Math.round((s.correct/s.seen)*100) : 0;
+    return {term: item.en.term, ...s, accuracy:acc};
+  }).sort((a,b)=> (b.wrong-a.wrong) || (a.accuracy-b.accuracy) || a.term.localeCompare(b.term));
+
+  elStats.innerHTML="";
+  rows.forEach(r=>{
+    const box=document.createElement("div"); box.className="stat";
+    const top=document.createElement("div"); top.className="stat-top";
+    const left=document.createElement("div"); left.className="stat-term"; left.textContent=r.term;
+    const right=document.createElement("div"); right.className="stat-meta";
+    right.textContent="seen "+r.seen+" · correct "+r.correct+" · wrong "+r.wrong;
+    top.appendChild(left); top.appendChild(right);
+
+    const barrow=document.createElement("div"); barrow.className="barrow";
+    const bar=document.createElement("div"); bar.className="bar";
+    const inner=document.createElement("div"); inner.style.width=r.accuracy+"%";
+    bar.appendChild(inner);
+    const pct=document.createElement("div"); pct.className="pct"; pct.textContent=r.accuracy+"%";
+    barrow.appendChild(bar); barrow.appendChild(pct);
+
+    box.appendChild(top); box.appendChild(barrow);
+    elStats.appendChild(box);
+  });
+}
+
+function showFeedback(type, msg, showGold) {
+  elFeedback.className = "feedback "+type;
+  elFeedback.style.display = "block";
+  elFeedback.innerHTML = '<div style="font-weight:800">'+msg+'</div>';
+  if(showGold && current) {
+    const v = viewOf(current);
+    const gold = v.chunks.map((c,i)=> '<span class="chip" style="display:inline-block;margin:6px 6px 0 0">'+(i+1)+'. '+c+'</span>').join("");
+    elFeedback.innerHTML += '<div style="margin-top:10px"><div class="small" style="text-transform:uppercase;letter-spacing:.08em;opacity:.7">'+(lang==="zh"?"正确顺序":"Correct order")+'</div><div style="margin-top:6px">'+gold+'</div></div>';
+  }
+}
+
+function pickNext() {
+  const weights = BANK.map(item=>{
+    const s = stats[statKey(item)] || {correct:0, wrong:0, seen:0};
+    return 1 + s.wrong*2 + (s.seen < 3 ? 1 : 0);
+  });
+
+  current = weightedPick(BANK, weights);
+  const v = viewOf(current);
+  pool = shuffle(v.chunks);
+  answer = [];
+  locked = false;
+  elFeedback.style.display = "none";
+  if(typeInput) typeInput.value = "";
+
+  const s = ensureStats(statKey(current));
+  s.seen += 1;
+  saveJSON(STATS_KEY, stats);
+
+  renderQuiz(); renderStats();
+}
+
+function pickChunk(chunk) {
+  if(locked) return;
+  answer.push(chunk);
+  const idx = pool.indexOf(chunk);
+  if(idx>=0) pool.splice(idx,1);
+  renderQuiz();
+}
+function undo() {
+  if(locked || answer.length===0) return;
+  const last = answer.pop();
+  pool.unshift(last);
+  renderQuiz();
+}
+function reset() {
+  if(!current || locked) return;
+  pool = shuffle(viewOf(current).chunks);
+  answer = [];
+  renderQuiz();
+}
+
+function submitOrder() {
+  if(!current || locked) return;
+  const v = viewOf(current);
+  if(answer.length !== v.chunks.length) {
+    showFeedback("warn", lang==="zh" ? "还没选完所有短语。" : "Not all phrases selected.", false);
+    return;
+  }
+  const isCorrect = answer.join(" ") === v.chunks.join(" ");
+  locked = true;
+
+  const s = ensureStats(statKey(current));
+  if(isCorrect) s.correct += 1; else s.wrong += 1;
+  saveJSON(STATS_KEY, stats);
+
+  const entry = {
+    id: Date.now()+"_"+Math.random().toString(16).slice(2),
+    ts: Date.now(),
+    term: v.term,
+    termId: current.id,
+    lang: lang,
+    mode: "order",
+    correct: isCorrect,
+    user: answer.slice(),
+    gold: v.chunks.slice(),
+    full: v.full
+  };
+  attempts.unshift(entry);
+  attempts = attempts.slice(0,300);
+  saveJSON(ATTEMPTS_KEY, attempts);
+
+  renderQuiz();
+  showFeedback(isCorrect ? "ok" : "bad",
+               isCorrect ? (lang==="zh"?"✅ 正确！":"✅ Correct!") : (lang==="zh"?"❌ 不对，再看看正确顺序。":"❌ Incorrect. See correct order."),
+               !isCorrect);
+  renderStats();
+}
+
+function submitType() {
+  if(!current || locked) return;
+  const v = viewOf(current);
+  const userRaw = typeInput.value || "";
+  const userNorm = normalizeAnswer(userRaw);
+  const goldNorm = normalizeAnswer(v.full);
+
+  if(userNorm.length === 0) {
+    showFeedback("warn", lang==="zh" ? "你还没输入答案。" : "You haven't typed an answer.", false);
+    return;
+  }
+
+  const doAI = aiEnabled && aiKey && aiKey.trim().length > 0;
+
+  if(doAI){
+    showFeedback("warn", lang==="zh" ? "正在AI评分..." : "Grading with AI...", false);
+
+    gradeWithAI({
+      term: v.term,
+      gold: v.full,
+      user: userRaw,
+      lang: lang,
+      baseUrl: aiBase,
+      apiKey: aiKey.trim(),
+      model: aiModel,
+      rubricText: rubricText
+    }).then(res=>{
+      const score = Math.max(0, Math.min(100, parseInt(res.parsed?.score ?? 0,10)));
+      const pass = score >= (isFinite(aiPassScore)?aiPassScore:85);
+      const isCorrect = pass;
+
+      locked = true;
+      const s = ensureStats(statKey(current));
+      if(isCorrect) s.correct += 1; else s.wrong += 1;
+      saveJSON(STATS_KEY, stats);
+
+      const entry = {
+        id: Date.now()+"_"+Math.random().toString(16).slice(2),
+        ts: Date.now(),
+        term: v.term,
+        termId: current.id,
+        lang: lang,
+        mode: "type",
+        correct: isCorrect,
+        score: score,
+        feedback: res.parsed?.feedback || "",
+        missing_points: res.parsed?.missing_points || [],
+        userText: userRaw,
+        goldText: v.full,
+        full: v.full,
+        user: [],
+        gold: []
+      };
+      attempts.unshift(entry);
+      attempts = attempts.slice(0,300);
+      saveJSON(ATTEMPTS_KEY, attempts);
+
+      renderQuiz();
+      const fb = res.parsed?.feedback ? (" " + res.parsed.feedback) : "";
+      showFeedback(isCorrect ? "ok" : "bad",
+        (lang==="zh"
+          ? (isCorrect?`✅ 通过（${score}分）！`:`❌ 未通过（${score}分）。`)
+          : (isCorrect?`✅ Pass (${score})!`:`❌ Fail (${score}).`)) + fb,
+        false);
+      renderStats();
+    }).catch(err=>{
+      const isCorrect = (userNorm === goldNorm);
+      locked = true;
+
+      const s = ensureStats(statKey(current));
+      if(isCorrect) s.correct += 1; else s.wrong += 1;
+      saveJSON(STATS_KEY, stats);
+
+      const entry = {
+        id: Date.now()+"_"+Math.random().toString(16).slice(2),
+        ts: Date.now(),
+        term: v.term,
+        termId: current.id,
+        lang: lang,
+        mode: "type",
+        correct: isCorrect,
+        ai_error: String(err||""),
+        userText: userRaw,
+        goldText: v.full,
+        full: v.full,
+        user: [],
+        gold: []
+      };
+      attempts.unshift(entry);
+      attempts = attempts.slice(0,300);
+      saveJSON(ATTEMPTS_KEY, attempts);
+
+      renderQuiz();
+      showFeedback("warn",
+        (lang==="zh" ? "AI评分失败，已改用严格匹配。" : "AI grading failed; fell back to strict match.") + " " + String(err||"").slice(0,120),
+        false);
+      renderStats();
+    });
+
+    return;
+  }
+
+  const isCorrect = (userNorm === goldNorm);
+  locked = true;
+
+  const s = ensureStats(statKey(current));
+  if(isCorrect) s.correct += 1; else s.wrong += 1;
+  saveJSON(STATS_KEY, stats);
+
+  const entry = {
+    id: Date.now()+"_"+Math.random().toString(16).slice(2),
+    ts: Date.now(),
+    term: v.term,
+    termId: current.id,
+    lang: lang,
+    mode: "type",
+    correct: isCorrect,
+    userText: userRaw,
+    goldText: v.full,
+    full: v.full,
+    user: [],
+    gold: []
+  };
+  attempts.unshift(entry);
+  attempts = attempts.slice(0,300);
+  saveJSON(ATTEMPTS_KEY, attempts);
+
+  renderQuiz();
+  showFeedback(isCorrect ? "ok" : "bad",
+               isCorrect ? (lang==="zh"?"✅ 正确！":"✅ Correct!") : (lang==="zh"?"❌ 不对，提交后可对照句子复盘。":"❌ Incorrect. Review the sentence after submit."),
+               false);
+  renderStats();
+}
+
+function submitDispatcher() {
+  if(mode === "type") return submitType();
+  return submitOrder();
+}
+
+function clearAll() {
+  stats = {};
+  attempts = [];
+  saveJSON(STATS_KEY, stats);
+  saveJSON(ATTEMPTS_KEY, attempts);
+  pickNext();
+}
+
+/** history modal */
+function openHistory() {
+  attemptCount.textContent = attempts.length;
+  lblHistSub.innerHTML = (lang==="zh")
+    ? '最近 <span id="attemptCount">'+attempts.length+'</span> 条（最多保存 300 条）'
+    : 'Last <span id="attemptCount">'+attempts.length+'</span> (max 300)';
+  attemptList.innerHTML = "";
+
+  if(attempts.length === 0) {
+    attemptList.innerHTML = '<div class="small">'+(lang==="zh"?"暂无记录。":"No history yet.")+'</div>';
+  } else {
+    attempts.forEach(a=>{
+      const pillClass = a.correct ? "pill ok" : "pill bad";
+      const pillText = a.correct ? (lang==="zh"?"正确":"Correct") : (lang==="zh"?"错误":"Wrong");
+      const scoreText = (a.score!==undefined && a.score!==null) ? (" · "+a.score) : "";
+      const modeTag = (a.mode||"order")==="type" ? (lang==="zh"?"打字":"TYPE") : (lang==="zh"?"选词":"ORDER");
+
+      let userView = "";
+      let goldView = "";
+      if((a.mode||"order")==="type") {
+        userView = '<div style="white-space:pre-wrap;font-size:13px;color:#334155;border:1px solid var(--border);border-radius:14px;padding:10px;background:#fff">'+(a.userText||"")+'</div>';
+        goldView = '<div style="white-space:pre-wrap;font-size:13px;color:#334155;border:1px solid var(--border);border-radius:14px;padding:10px;background:#fff">'+(a.goldText||a.full||"")+'</div>';
+        if(a.feedback){ goldView += '<div class="small" style="margin-top:8px">AI: '+a.feedback+'</div>'; }
+        if(a.missing_points && a.missing_points.length){ goldView += '<div class="small" style="margin-top:6px">missing: '+a.missing_points.slice(0,5).join(" / ")+'</div>'; }
+        if(a.ai_error){ goldView += '<div class="small" style="margin-top:6px">ai_error: '+String(a.ai_error).slice(0,120)+'</div>'; }
+      } else {
+        userView = (a.user||[]).map((c,i)=> '<span class="chip" style="display:inline-block;margin:6px 6px 0 0;font-size:12px;padding:8px 10px">'+(i+1)+'. '+c+'</span>').join("");
+        goldView = (a.gold||[]).map((c,i)=> '<span class="chip" style="display:inline-block;margin:6px 6px 0 0;font-size:12px;padding:8px 10px">'+(i+1)+'. '+c+'</span>').join("");
+      }
+
+      const html =
+        '<div class="attempt">'+
+          '<div class="attempt-top">'+
+            '<div>'+
+              '<div style="font-weight:700;font-size:13px">'+a.term+' <span class="small">('+(a.lang||"").toUpperCase()+' · '+modeTag+')</span></div>'+
+              '<div class="small" style="margin-top:4px">'+nowStr(a.ts)+'</div>'+
+            '</div>'+
+            '<div class="'+pillClass+'">'+pillText+scoreText+'</div>'+
+          '</div>'+
+          '<div style="margin-top:10px">'+
+            '<div class="small" style="text-transform:uppercase;letter-spacing:.08em;opacity:.7">'+(lang==="zh"?"句子":"Sentence")+'</div>'+
+            '<div style="margin-top:6px;font-size:13px;color:#334155">'+(a.full||"")+'</div>'+
+          '</div>'+
+          '<div class="grid2">'+
+            '<div>'+
+              '<div class="small" style="text-transform:uppercase;letter-spacing:.08em;opacity:.7">'+(lang==="zh"?"你的答案":"Your answer")+'</div>'+
+              '<div style="margin-top:6px">'+userView+'</div>'+
+            '</div>'+
+            '<div>'+
+              '<div class="small" style="text-transform:uppercase;letter-spacing:.08em;opacity:.7">'+(lang==="zh"?"标准答案":"Gold")+'</div>'+
+              '<div style="margin-top:6px">'+goldView+'</div>'+
+            '</div>'+
+          '</div>'+
+        '</div>';
+      attemptList.insertAdjacentHTML("beforeend", html);
+    });
+  }
+  modal.classList.add("open");
+}
+function closeHistory(){ modal.classList.remove("open"); }
+function clearAttempts(){ attempts = []; saveJSON(ATTEMPTS_KEY, attempts); openHistory(); }
+
+
+
+/** Startup modal (ask enable AI typing grading) */
+const STARTUP_SEEN = "biochem_startup_seen_v1";
+const startupModal = document.getElementById("startupModal");
+function openStartup(){ startupModal.classList.add("open"); }
+function closeStartup(){ startupModal.classList.remove("open"); }
+document.getElementById("startupBackdrop").onclick=closeStartup;
+document.getElementById("btnStartupSkip").onclick=function(){
+  localStorage.setItem(STARTUP_SEEN, "1");
+  aiEnabled = false;
+  localStorage.setItem(AI_ENABLED, "0");
+  closeStartup();
+};
+document.getElementById("btnStartupEnable").onclick=function(){
+  localStorage.setItem(STARTUP_SEEN, "1");
+  closeStartup();
+  // open settings and turn on
+  openSettings();
+  document.getElementById("aiGradeEnabled").checked = true;
+  aiEnabled = true;
+};
+
+
+/** AI settings modal */
+const settingsModal=document.getElementById("settingsModal");
+const settingsMsg=document.getElementById("settingsMsg");
+const sfBaseUrl=document.getElementById("sfBaseUrl");
+const sfModel=document.getElementById("sfModel");
+const sfApiKey=document.getElementById("sfApiKey");
+const aiGradeEnabled=document.getElementById("aiGradeEnabled");
+const aiPassInput=document.getElementById("aiPassScore");
+const rubricInput=document.getElementById("rubricText");
+
+function openSettings(){
+  sfBaseUrl.value = aiBase;
+  sfModel.value = aiModel;
+  sfApiKey.value = aiKey;
+  aiGradeEnabled.checked = aiEnabled;
+  aiPassInput.value = String(aiPassScore || 85);
+  rubricInput.value = OFFICIAL_RUBRIC_TEXT || "";
+  settingsMsg.textContent = "";
+  settingsModal.classList.add("open");
+}
+function closeSettings(){ settingsModal.classList.remove("open"); }
+
+document.getElementById("btnSettings").onclick=openSettings;
+document.getElementById("btnSettingsClose").onclick=closeSettings;
+document.getElementById("settingsBackdrop").onclick=closeSettings;
+
+document.getElementById("btnSettingsSave").onclick=function(){
+  aiBase = (sfBaseUrl.value||"").trim() || "https://api.siliconflow.cn/v1";
+  aiModel = (sfModel.value||"").trim() || "Qwen/Qwen2.5-72B-Instruct";
+  aiKey = (sfApiKey.value||"").trim();
+  aiEnabled = !!aiGradeEnabled.checked;
+  aiPassScore = parseInt(aiPassInput.value||"85",10);
+  if(!isFinite(aiPassScore)) aiPassScore = 85;
+  rubricText = OFFICIAL_RUBRIC_TEXT || "";
+
+  localStorage.setItem(AI_BASE, aiBase);
+  localStorage.setItem(AI_MODEL, aiModel);
+  localStorage.setItem(AI_KEY, aiKey);
+  localStorage.setItem(AI_ENABLED, aiEnabled ? "1" : "0");
+  localStorage.setItem(AI_PASS, String(aiPassScore));
+  localStorage.setItem(AI_RUBRIC, rubricText);
+
+  settingsMsg.textContent = (lang==="zh") ? "已保存（仅保存在本机浏览器）。" : "Saved (stored only in this browser).";
+};
+
+document.getElementById("btnSettingsClear").onclick=function(){
+  aiKey = "";
+  sfApiKey.value = "";
+  localStorage.removeItem(AI_KEY);
+  settingsMsg.textContent = (lang==="zh") ? "已清除密钥。" : "API key cleared.";
+};
+
+document.getElementById("btnTestAI").onclick=async function(){
+  settingsMsg.textContent = (lang==="zh") ? "测试中..." : "Testing...";
+  const base = (sfBaseUrl.value||"").trim() || "https://api.siliconflow.cn/v1";
+  const model = (sfModel.value||"").trim() || "Qwen/Qwen2.5-72B-Instruct";
+  const key = (sfApiKey.value||"").trim();
+  if(!key){
+    settingsMsg.textContent = (lang==="zh") ? "请先填写 API Key。" : "Please enter API key first.";
+    return;
+  }
+  try{
+    const url = base.replace(/\/$/,"") + "/chat/completions";
+    const body = { model, messages:[{role:"user", content:"ping"}], max_tokens:5, temperature:0.0 };
+    const resp = await fetch(url, {method:"POST", headers:{"Content-Type":"application/json","Authorization":"Bearer "+key}, body:JSON.stringify(body)});
+    if(!resp.ok){
+      const t = await resp.text().catch(()=> "");
+      throw new Error("HTTP "+resp.status+" "+resp.statusText+" "+t.slice(0,200));
+    }
+    settingsMsg.textContent = (lang==="zh") ? "✅ 连接正常。" : "✅ OK.";
+  }catch(e){
+    settingsMsg.textContent = ((lang==="zh") ? "❌ 失败：" : "❌ Failed: ") + String(e||"").slice(0,180);
+  }
+};
+
+
+/** events */
+document.getElementById("btnNext").onclick=pickNext;
+document.getElementById("btnUndo").onclick=undo;
+document.getElementById("btnReset").onclick=reset;
+document.getElementById("btnSubmit").onclick=submitDispatcher;
+document.getElementById("btnTypeSubmit").onclick=submitDispatcher;
+document.getElementById("btnTypeClear").onclick=()=>{ typeInput.value=""; };
+document.getElementById("btnClear").onclick=clearAll;
+
+document.getElementById("btnHistory").onclick=openHistory;
+document.getElementById("btnClose").onclick=closeHistory;
+document.getElementById("backdrop").onclick=closeHistory;
+document.getElementById("btnClearAttempts").onclick=clearAttempts;
+
+answerModeSel.onchange = function(){
+  answerMode = answerModeSel.value;
+  localStorage.setItem(ANSWERMODE_KEY, answerMode);
+  lang = answerMode.startsWith("zh_") ? "zh" : "en";
+  mode = answerMode.endsWith("_type") ? "type" : "order";
+  applyUI();
+  // reset current question UI (do not change stats)
+  if(current){
+    const v = viewOf(current);
+    pool = shuffle(v.chunks);
+    answer = [];
+    locked = false;
+    elFeedback.style.display = "none";
+    typeInput.value = "";
+    renderQuiz();
+  } else {
+    pickNext();
+  }
+};
+
+applyUI();
+pickNext();
+
+if((localStorage.getItem(STARTUP_SEEN)||"0")!=="1"){ openStartup(); }
+</script>
+</body>
+</html>
