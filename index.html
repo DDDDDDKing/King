@@ -193,9 +193,10 @@
           <input id="sfApiKey" type="password" placeholder="sk-..." style="width:100%;border:1px solid var(--border);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow)" />
           <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
             <label class="small"><input type="checkbox" id="aiGradeEnabled" /> 启用 AI 打字评分</label>
-            <span class="small">判定阈值：</span>
-            <input id="aiPassScore" type="number" min="0" max="100" value="85" style="width:90px;border:1px solid var(--border);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow)" />
-            <span class="small">（≥阈值记为正确）</span>
+            <label class="small" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="onlyFullMark" /> 仅满分算正确</label>
+            <span class="small">否则及格分：</span>
+            <input id="aiPassScore" type="number" min="0" max="10" value="0" style="width:90px;border:1px solid var(--border);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow)" />
+            <span class="small">（≥及格分记为正确）</span>
           </div>
           <div class="small" style="margin:14px 0 8px">评分标准：生化教研室公布的标准（已内置，不可修改）：</div>
           <textarea id="rubricText" rows="6" style="width:100%;border:1px solid var(--border);border-radius:16px;padding:12px;box-shadow:var(--shadow);resize:vertical" placeholder="（已内置教研室评分标准）" readonly></textarea>
@@ -289,6 +290,7 @@ const AI_BASE = "biochem_ai_base_v1";
 const AI_MODEL = "biochem_ai_model_v1";
 const AI_ENABLED = "biochem_ai_enabled_v1";
 const AI_PASS = "biochem_ai_pass_v1";
+const AI_ONLYFULL = "biochem_ai_onlyfull_v1";
 const AI_RUBRIC = "biochem_ai_rubric_v1";
 
 // Official rubric text (from Biochem Teaching & Research Office PDF)
@@ -310,10 +312,80 @@ async function gradeWithAI({term, gold, user, lang, baseUrl, apiKey, model, rubr
   const rubric = rubricText && rubricText.trim()
     ? ((lang==="zh") ? ("评分标准：\n"+rubricText.trim()) : ("Rubric:\n"+rubricText.trim()))
     : ((lang==="zh") ? "评分标准：按语义等价、关键点覆盖、表述准确性评分。" : "Rubric: grade semantic equivalence, key-point coverage, and accuracy.");
+  const maxScore = (lang==="zh") ? 3 : 4;
   const prompt = (lang==="zh")
-    ? `请给“${term}”的名词解释打分（0-100）。\n标准答案：${gold}\n学生答案：${user}\n${rubric}\n\n要求：\n1) 只返回JSON：{"score":number,"verdict":"pass"|"fail","feedback":"...","missing_points":["..."]}\n2) score为整数，feedback不超过80字，missing_points最多5条。`
-    : `Grade the definition for "${term}" (0-100).\nGold: ${gold}\nStudent: ${user}\n${rubric}\n\nReturn JSON only: {"score":number,"verdict":"pass"|"fail","feedback":"...","missing_points":["..."]}. score must be integer; feedback <= 80 chars; missing_points <= 5.`;
+    ? `你是【中南大学生物化学C】名词解释的正式阅卷老师。请【严格、逐条】依据“评分标准原文”阅卷，禁止自行补充标准。
+请对“${term}”的名词解释打分（0-${maxScore}分，允许0.5分步进）。
 
+【标准答案】
+${gold}
+
+【学生答案】
+${user}
+
+【评分标准原文（必须逐条对照）】
+${rubric}
+
+【强制要求（非常重要）】
+1) 你【必须】先从评分标准中抽取【得分点条目】（短语即可），再逐条判断学生是否命中。
+2) hit_points / miss_points / deductions 三个数组【都必须给出】；若无内容也要返回空数组，不得省略。
+3) 三个数组中的文字【必须来自评分标准原文或其直接同义改写】，禁止编造。
+4) deductions 中需明确说明【因缺失哪一评分点而扣分】。
+5) 英文题满分4分，中文题满分3分。verdict规则：只有 score == ${maxScore} 才能 verdict=pass，否则 verdict=fail。
+6) 你还必须额外生成一个 summary_html 字段：它是【可直接渲染的HTML字符串】（包含<br>与<ul><li>），格式必须严格为：
+❌ Not full marks (3/4).<br>
+<br>
+Missing points<ul><li>...</li></ul><br>
+Deductions<ul><li>...</li></ul><br>
+Hit points<ul><li>...</li></ul>
+（如果某一项为空，也要输出对应标题并给空<ul></ul>；若满分，把第一行的❌改成✅ Full marks pass (4/4). 或 ✅ 满分通过（3/3分）！）
+
+【只允许返回JSON，不得输出任何额外文字】
+{
+  "score": number,
+  "max_score": ${maxScore},
+  "verdict": "pass" | "fail",
+  "hit_points": ["..."],
+  "miss_points": ["..."],
+  "deductions": ["..."],
+  "summary_html": "<div>...</div>"
+}`
+    : `You are an official grader for Central South University Biochemistry C definitions.
+Grade STRICTLY by the rubric only. Do NOT invent criteria.
+Score the definition for "${term}" from 0 to ${maxScore} (0.5 increments allowed).
+
+Gold:
+${gold}
+
+Student:
+${user}
+
+Rubric (verbatim):
+${rubric}
+
+MANDATORY RULES:
+1) First extract scoring points from the rubric, then check them one by one.
+2) hit_points, miss_points, deductions MUST all be present (use empty arrays if needed).
+3) Text in arrays must come from the rubric wording or direct paraphrases.
+4) deductions must explicitly state which missing rubric point caused the deduction.
+5) verdict=pass ONLY if score == ${maxScore}; otherwise fail.
+6) Also generate summary_html: a directly renderable HTML string (with <br> and <ul><li>) in this exact template:
+❌ Not full marks (3/4).<br><br>
+Missing points<ul><li>...</li></ul><br>
+Deductions<ul><li>...</li></ul><br>
+Hit points<ul><li>...</li></ul>
+(If a section is empty, still output the heading with an empty <ul></ul>. If full marks, use ✅ Full marks pass (4/4)! as the first line.)
+
+Return JSON only:
+{
+  "score": number,
+  "max_score": ${maxScore},
+  "verdict": "pass" | "fail",
+  "hit_points": ["..."],
+  "miss_points": ["..."],
+  "deductions": ["..."],
+  "summary_html": "<div>...</div>"
+}`;
   const url = baseUrl.replace(/\/$/,"") + "/chat/completions";
   const body = {
     model: model,
@@ -360,6 +432,7 @@ let aiModel = localStorage.getItem(AI_MODEL) || "Qwen/Qwen2.5-72B-Instruct";
 let aiKey = localStorage.getItem(AI_KEY) || "";
 let aiEnabled = (localStorage.getItem(AI_ENABLED) || "0") === "1";
 let aiPassScore = parseInt(localStorage.getItem(AI_PASS) || "85", 10);
+let onlyFullMark = (localStorage.getItem(AI_ONLYFULL) || "1") === "1";
 let rubricText = localStorage.getItem(AI_RUBRIC) || OFFICIAL_RUBRIC_TEXT || "";
 
 let attempts = loadJSON(ATTEMPTS_KEY, []);
@@ -643,9 +716,9 @@ function submitType() {
       model: aiModel,
       rubricText: rubricText
     }).then(res=>{
-      const score = Math.max(0, Math.min(100, parseInt(res.parsed?.score ?? 0,10)));
-      const pass = score >= (isFinite(aiPassScore)?aiPassScore:85);
-      const isCorrect = pass;
+      const maxScore = (lang==="zh") ? 3 : 4;
+      const score = Math.max(0, Math.min(maxScore, parseFloat(res.parsed?.score ?? 0)));
+      const isCorrect = onlyFullMark ? (score >= maxScore - 1e-9) : (score >= (isFinite(aiPassScore)?aiPassScore:0));
 
       locked = true;
       const s = ensureStats(statKey(current));
@@ -661,8 +734,10 @@ function submitType() {
         mode: "type",
         correct: isCorrect,
         score: score,
-        feedback: res.parsed?.feedback || "",
-        missing_points: res.parsed?.missing_points || [],
+        max_score: (res.parsed?.max_score ?? ((lang==="zh")?3:4)),
+        hit_points: res.parsed?.hit_points || [],
+        miss_points: res.parsed?.miss_points || [],
+        deductions: res.parsed?.deductions || [],
         userText: userRaw,
         goldText: v.full,
         full: v.full,
@@ -675,11 +750,13 @@ function submitType() {
 
       renderQuiz();
       const fb = res.parsed?.feedback ? (" " + res.parsed.feedback) : "";
-      showFeedback(isCorrect ? "ok" : "bad",
-        (lang==="zh"
-          ? (isCorrect?`✅ 通过（${score}分）！`:`❌ 未通过（${score}分）。`)
-          : (isCorrect?`✅ Pass (${score})!`:`❌ Fail (${score}).`)) + fb,
-        false);
+      const summaryHtml = (res.parsed && typeof res.parsed.summary_html === "string" && res.parsed.summary_html.trim())
+        ? res.parsed.summary_html
+        : ((lang==="zh")
+            ? (isCorrect?`✅ 满分通过（${score}/${maxScore}分）！`:`❌ 未满分（${score}/${maxScore}分）。`)
+            : (isCorrect?`✅ Full marks pass (${score}/${maxScore})!`:`❌ Not full marks (${score}/${maxScore}).`));
+
+      showFeedback(isCorrect ? "ok" : "bad", summaryHtml, false);
       renderStats();
     }).catch(err=>{
       const isCorrect = (userNorm === goldNorm);
@@ -785,8 +862,9 @@ function openHistory() {
       if((a.mode||"order")==="type") {
         userView = '<div style="white-space:pre-wrap;font-size:13px;color:#334155;border:1px solid var(--border);border-radius:14px;padding:10px;background:#fff">'+(a.userText||"")+'</div>';
         goldView = '<div style="white-space:pre-wrap;font-size:13px;color:#334155;border:1px solid var(--border);border-radius:14px;padding:10px;background:#fff">'+(a.goldText||a.full||"")+'</div>';
-        if(a.feedback){ goldView += '<div class="small" style="margin-top:8px">AI: '+a.feedback+'</div>'; }
-        if(a.missing_points && a.missing_points.length){ goldView += '<div class="small" style="margin-top:6px">missing: '+a.missing_points.slice(0,5).join(" / ")+'</div>'; }
+        if(a.hit_points && a.hit_points.length){ goldView += '<div class="small" style="margin-top:8px">hit: '+a.hit_points.slice(0,5).join(" / ")+'</div>'; }
+        if(a.miss_points && a.miss_points.length){ goldView += '<div class="small" style="margin-top:6px">miss: '+a.miss_points.slice(0,5).join(" / ")+'</div>'; }
+        if(a.deductions && a.deductions.length){ goldView += '<div class="small" style="margin-top:6px">deduct: '+a.deductions.slice(0,5).join(" / ")+'</div>'; }
         if(a.ai_error){ goldView += '<div class="small" style="margin-top:6px">ai_error: '+String(a.ai_error).slice(0,120)+'</div>'; }
       } else {
         userView = (a.user||[]).map((c,i)=> '<span class="chip" style="display:inline-block;margin:6px 6px 0 0;font-size:12px;padding:8px 10px">'+(i+1)+'. '+c+'</span>').join("");
@@ -864,8 +942,9 @@ function openSettings(){
   sfModel.value = aiModel;
   sfApiKey.value = aiKey;
   aiGradeEnabled.checked = aiEnabled;
-  aiPassInput.value = String(aiPassScore || 85);
+  aiPassInput.value = String(isFinite(aiPassScore)?aiPassScore:0);
   rubricInput.value = OFFICIAL_RUBRIC_TEXT || "";
+  document.getElementById("onlyFullMark").checked = !!onlyFullMark;
   settingsMsg.textContent = "";
   settingsModal.classList.add("open");
 }
@@ -880,8 +959,9 @@ document.getElementById("btnSettingsSave").onclick=function(){
   aiModel = (sfModel.value||"").trim() || "Qwen/Qwen2.5-72B-Instruct";
   aiKey = (sfApiKey.value||"").trim();
   aiEnabled = !!aiGradeEnabled.checked;
-  aiPassScore = parseInt(aiPassInput.value||"85",10);
-  if(!isFinite(aiPassScore)) aiPassScore = 85;
+  aiPassScore = parseFloat(aiPassInput.value||"0");
+  if(!isFinite(aiPassScore)) aiPassScore = 0;
+  onlyFullMark = !!document.getElementById("onlyFullMark").checked;
   rubricText = OFFICIAL_RUBRIC_TEXT || "";
 
   localStorage.setItem(AI_BASE, aiBase);
@@ -889,9 +969,10 @@ document.getElementById("btnSettingsSave").onclick=function(){
   localStorage.setItem(AI_KEY, aiKey);
   localStorage.setItem(AI_ENABLED, aiEnabled ? "1" : "0");
   localStorage.setItem(AI_PASS, String(aiPassScore));
+  localStorage.setItem(AI_ONLYFULL, onlyFullMark ? "1" : "0");
   localStorage.setItem(AI_RUBRIC, rubricText);
 
-  settingsMsg.textContent = (lang==="zh") ? "已保存（仅保存在本机浏览器）。" : "Saved (stored only in this browser).";
+  settingsMsg.textContent = (lang==="zh") ? ("已保存（仅保存在本机浏览器）。当前判定："+(onlyFullMark?"仅满分算正确":"按及格分判定")) : ("Saved (stored only in this browser). Rule: "+(onlyFullMark?"full marks only":"pass score"));
 };
 
 document.getElementById("btnSettingsClear").onclick=function(){
