@@ -332,13 +332,7 @@ ${rubric}
 3) 三个数组中的文字【必须来自评分标准原文或其直接同义改写】，禁止编造。
 4) deductions 中需明确说明【因缺失哪一评分点而扣分】。
 5) 英文题满分4分，中文题满分3分。verdict规则：只有 score == ${maxScore} 才能 verdict=pass，否则 verdict=fail。
-6) 你还必须额外生成一个 summary_html 字段：它是【可直接渲染的HTML字符串】（包含<br>与<ul><li>），格式必须严格为：
-❌ Not full marks (3/4).<br>
-<br>
-Missing points<ul><li>...</li></ul><br>
-Deductions<ul><li>...</li></ul><br>
-Hit points<ul><li>...</li></ul>
-（如果某一项为空，也要输出对应标题并给空<ul></ul>；若满分，把第一行的❌改成✅ Full marks pass (4/4). 或 ✅ 满分通过（3/3分）！）
+6) 只返回结构化数据：不要输出HTML，不要换行，不要额外说明文字。
 
 【只允许返回JSON，不得输出任何额外文字】
 {
@@ -347,8 +341,7 @@ Hit points<ul><li>...</li></ul>
   "verdict": "pass" | "fail",
   "hit_points": ["..."],
   "miss_points": ["..."],
-  "deductions": ["..."],
-  "summary_html": "<div>...</div>"
+  "deductions": ["..."]
 }`
     : `You are an official grader for Central South University Biochemistry C definitions.
 Grade STRICTLY by the rubric only. Do NOT invent criteria.
@@ -369,12 +362,7 @@ MANDATORY RULES:
 3) Text in arrays must come from the rubric wording or direct paraphrases.
 4) deductions must explicitly state which missing rubric point caused the deduction.
 5) verdict=pass ONLY if score == ${maxScore}; otherwise fail.
-6) Also generate summary_html: a directly renderable HTML string (with <br> and <ul><li>) in this exact template:
-❌ Not full marks (3/4).<br><br>
-Missing points<ul><li>...</li></ul><br>
-Deductions<ul><li>...</li></ul><br>
-Hit points<ul><li>...</li></ul>
-(If a section is empty, still output the heading with an empty <ul></ul>. If full marks, use ✅ Full marks pass (4/4)! as the first line.)
+6) Return structured data only: do NOT output HTML, do NOT add extra commentary.
 
 Return JSON only:
 {
@@ -383,8 +371,7 @@ Return JSON only:
   "verdict": "pass" | "fail",
   "hit_points": ["..."],
   "miss_points": ["..."],
-  "deductions": ["..."],
-  "summary_html": "<div>...</div>"
+  "deductions": ["..."]
 }`;
   const url = baseUrl.replace(/\/$/,"") + "/chat/completions";
   const body = {
@@ -394,7 +381,7 @@ Return JSON only:
       {role:"user", content: prompt}
     ],
     temperature: 0.2,
-    max_tokens: 300
+    max_tokens: 1200
   };
 
   const resp = await fetch(url, {
@@ -750,13 +737,26 @@ function submitType() {
 
       renderQuiz();
       const fb = res.parsed?.feedback ? (" " + res.parsed.feedback) : "";
-      const summaryHtml = (res.parsed && typeof res.parsed.summary_html === "string" && res.parsed.summary_html.trim())
-        ? res.parsed.summary_html
-        : ((lang==="zh")
-            ? (isCorrect?`✅ 满分通过（${score}/${maxScore}分）！`:`❌ 未满分（${score}/${maxScore}分）。`)
-            : (isCorrect?`✅ Full marks pass (${score}/${maxScore})!`:`❌ Not full marks (${score}/${maxScore}).`));
+      function esc(s){
+        return (s??"").toString().replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+      }
+      function ul(arr){
+        const a = Array.isArray(arr)?arr:[];
+        return "<ul>" + a.slice(0,10).map(x=>"<li>"+esc(x)+"</li>").join("") + "</ul>";
+      }
 
-      showFeedback(isCorrect ? "ok" : "bad", summaryHtml, false);
+      const miss = res.parsed?.miss_points || [];
+      const ded  = res.parsed?.deductions || [];
+      const hit  = res.parsed?.hit_points || [];
+      const header = (lang==="zh")
+        ? (isCorrect?`✅ 满分通过（${score}/${maxScore}分）！`:`❌ 未满分（${score}/${maxScore}分）。`)
+        : (isCorrect?`✅ Full marks pass (${score}/${maxScore})!`:`❌ Not full marks (${score}/${maxScore}).`);
+      const detailHtml =
+        `<br><br>${lang==="zh"?"Missing points（漏点列表）":"Missing points"}${ul(miss)}` +
+        `<br>${lang==="zh"?"Deductions（扣分原因列表）":"Deductions"}${ul(ded)}` +
+        `<br>${lang==="zh"?"Hit points（命中点列表）":"Hit points"}${ul(hit)}`;
+
+      showFeedback(isCorrect ? "ok" : "bad", header + detailHtml, false);
       renderStats();
     }).catch(err=>{
       const isCorrect = (userNorm === goldNorm);
