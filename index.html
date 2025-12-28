@@ -45,6 +45,10 @@
     .small{font-size:12px;color:var(--muted)}
     .statlist{margin-top:12px;display:flex;flex-direction:column;gap:10px;max-height:520px;overflow:auto;padding-right:4px}
     .stat{background:#f8fafc;border:1px solid var(--border);border-radius:16px;padding:12px}
+
+    .stat.clickable{cursor:pointer}
+    .stat.clickable:hover{background:#f1f5f9}
+    .stat.active{border-color:var(--brand)}
     .stat-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
     .stat-term{font-size:13px;font-weight:600}
     .stat-meta{font-size:12px;color:var(--muted)}
@@ -70,7 +74,19 @@
     .grid2{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
     @media(min-width:768px){.grid2{grid-template-columns:1fr 1fr}}
     textarea{font-family:inherit}
-  </style>
+  
+/* Right-panel chapter grouping */
+.statHeader{
+  margin-top: 14px;
+  padding: 8px 10px;
+  font-weight: 700;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+.statSpacer{ height: 10px; }
+
+</style>
 </head>
 <body>
   <div class="container">
@@ -87,6 +103,12 @@
           <option value="zh_type">中文打字</option>
           <option value="en_order">英文选词</option>
           <option value="zh_order">中文选词</option>
+        </select>
+
+        <label class="modeHint" for="quizOrderSel" id="lblQuizOrder">出题顺序：</label>
+        <select id="quizOrderSel">
+          <option value="random">随机/加权</option>
+          <option value="sequential">顺序</option>
         </select>
         <button id="btnSettings">AI打分设置</button>
         <button id="btnHistory">答题记录</button>
@@ -280,9 +302,130 @@ const BANK = [
   { id:"Bile pigment", en:{term:"Bile pigment", full:"Catabolic products of iron-containing porphyrins in vivo, including bilirubin, biliverdin, bilinogen, and bilin.", chunks:["Catabolic products","of iron-containing porphyrins","in vivo, including bilirubin, biliverdin, bilinogen,","and bilin."]}, zh:{term:"胆色素", full:"体内铁卟啉化合物的主要分解代谢产物，包括胆红素、胆绿素、胆素原和胆素 。", chunks:["体内铁卟啉化合物","的主要分解代谢产物","，包括胆红素","、胆绿素、胆素原和胆素","。"]} }
 ];
 
+const CHAPTERS = [
+  {
+    "title": "第一章 蛋白质的结构与功能",
+    "ids": [
+      "Peptide bond",
+      "Protein primary structure",
+      "Protein secondary structure",
+      "Domain",
+      "Isoelectric point (pI) of protein",
+      "Denaturation of protein"
+    ]
+  },
+  {
+    "title": "第二章 核酸的结构与功能",
+    "ids": [
+      "Denaturation of DNA",
+      "Hyperchromic effect",
+      "Melting temperature (, 融解温度)",
+      "Annealing"
+    ]
+  },
+  {
+    "title": "第三章 酶",
+    "ids": [
+      "Holoenzyme",
+      "Essential group",
+      "Active center / active site",
+      "Zymogen activation",
+      "Isoenzyme"
+    ]
+  },
+  {
+    "title": "第五章 糖代谢",
+    "ids": [
+      "Glycolysis",
+      "Substrate-level phosphorylation",
+      "Pastuer effect",
+      "Gluconeogenesis",
+      "Warburg effect"
+    ]
+  },
+  {
+    "title": "第六章 生物氧化",
+    "ids": [
+      "Respiratory chain / Electron transfer chain",
+      "P/O ratio",
+      "Oxidative phosphorylation",
+      "Uncoupler"
+    ]
+  },
+  {
+    "title": "第七章 脂质代谢",
+    "ids": [
+      "Essential fatty acids",
+      "Mobilization of fat",
+      "Ketone bodies"
+    ]
+  },
+  {
+    "title": "第八章 氨基酸代谢",
+    "ids": [
+      "Essential amino acids",
+      "Transamination",
+      "Ketogenic amino acids",
+      "One carbon units"
+    ]
+  },
+  {
+    "title": "第九章 核苷酸代谢",
+    "ids": [
+      "De novo synthesis",
+      "Salvage pathway"
+    ]
+  },
+  {
+    "title": "第十章 代谢的整合与调节",
+    "ids": [
+      "Allosteric regulation",
+      "Chemical modification"
+    ]
+  },
+  {
+    "title": "第十二章 DNA 的合成（复制）",
+    "ids": [
+      "Semiconservative replication",
+      "Okazaki fragment",
+      "Reverse transcription"
+    ]
+  },
+  {
+    "title": "第十四章 RNA 的合成（转录）",
+    "ids": [
+      "Ribozyme"
+    ]
+  },
+  {
+    "title": "第十五章 蛋白质的合成（翻译）",
+    "ids": [
+      "Codon",
+      "Degeneracy"
+    ]
+  },
+  {
+    "title": "第十七章 细胞信号转导",
+    "ids": [
+      "Secondary messenger",
+      "G protein / Guanylate binding proteins"
+    ]
+  },
+  {
+    "title": "第十九章 肝的生物化学",
+    "ids": [
+      "Biotransformation",
+      "Bile pigment"
+    ]
+  }
+];
+
+
 const STATS_KEY = "biochem_stats_v5";
 const ATTEMPTS_KEY = "biochem_attempts_v5";
 const ANSWERMODE_KEY = "biochem_answer_mode_v5";
+const QUIZORDER_KEY = "biochem_quiz_order_v1";
+const SEQ_INDEX_KEY = "biochem_seq_index_v1";
 
 // AI grading settings (stored locally)
 const AI_KEY = "biochem_ai_key_v1";
@@ -412,6 +555,10 @@ let answerMode = localStorage.getItem(ANSWERMODE_KEY) || "en_order";
 let lang = answerMode.startsWith("zh_") ? "zh" : "en";
 let mode = answerMode.endsWith("_type") ? "type" : "order";
 
+let quizOrder = localStorage.getItem(QUIZORDER_KEY) || "random";
+let seqIndex = parseInt(localStorage.getItem(SEQ_INDEX_KEY) || "0", 10);
+if(!isFinite(seqIndex) || seqIndex < 0) seqIndex = 0;
+
 let stats = loadJSON(STATS_KEY, {});
 
 let aiBase = localStorage.getItem(AI_BASE) || "https://api.siliconflow.cn/v1";
@@ -426,6 +573,8 @@ let attempts = loadJSON(ATTEMPTS_KEY, []);
 let current=null, pool=[], answer=[], locked=false;
 
 const answerModeSel=document.getElementById("answerModeSel");
+const quizOrderSel=document.getElementById("quizOrderSel");
+const lblQuizOrder=document.getElementById("lblQuizOrder");
 const elTerm=document.getElementById("term");
 const elFull=document.getElementById("full");
 const elChoices=document.getElementById("choices");
@@ -457,9 +606,15 @@ function ensureStats(key){ if(!stats[key]) stats[key] = {correct:0, wrong:0, see
 
 function applyUI() {
   answerModeSel.value = answerMode;
+  if(quizOrderSel) quizOrderSel.value = quizOrder;
 
   if(lang === "zh") {
     lblTerm.textContent = "当前术语";
+    if(lblQuizOrder) lblQuizOrder.textContent = "出题顺序：";
+    if(quizOrderSel){
+      quizOrderSel.options[0].textContent = "随机/加权";
+      quizOrderSel.options[1].textContent = "顺序";
+    }
     lblAns.textContent = (mode==="type") ? "你的答案（打字）" : "你的答案（选词排序）";
     lblChoices.textContent = "短语区（点击加入答案）";
     lblStats.textContent = "答题统计（本地）";
@@ -480,6 +635,11 @@ function applyUI() {
     document.getElementById("typeHint").textContent = "判分规则：忽略多余空格（连续空白会自动合并），其余字符需一致。";
   } else {
     lblTerm.textContent = "Term";
+    if(lblQuizOrder) lblQuizOrder.textContent = "Order:";
+    if(quizOrderSel){
+      quizOrderSel.options[0].textContent = "Random (weighted)";
+      quizOrderSel.options[1].textContent = "Sequential";
+    }
     lblAns.textContent = (mode==="type") ? "Your answer (typing)" : "Your answer (ordering)";
     lblChoices.textContent = "Phrases (click to add)";
     lblStats.textContent = "Stats (local)";
@@ -559,31 +719,53 @@ function renderQuiz() {
 }
 
 function renderStats() {
-  const rows = BANK.map(item=>{
-    const k = statKey(item);
-    const s = stats[k] || {correct:0, wrong:0, seen:0};
-    const acc = s.seen ? Math.round((s.correct/s.seen)*100) : 0;
-    return {term: item.en.term, ...s, accuracy:acc};
-  }).sort((a,b)=> (b.wrong-a.wrong) || (a.accuracy-b.accuracy) || a.term.localeCompare(b.term));
+  elStats.innerHTML = "";
 
-  elStats.innerHTML="";
-  rows.forEach(r=>{
-    const box=document.createElement("div"); box.className="stat";
-    const top=document.createElement("div"); top.className="stat-top";
-    const left=document.createElement("div"); left.className="stat-term"; left.textContent=r.term;
-    const right=document.createElement("div"); right.className="stat-meta";
-    right.textContent="seen "+r.seen+" · correct "+r.correct+" · wrong "+r.wrong;
-    top.appendChild(left); top.appendChild(right);
+  // Right panel: display in the exact order of the provided table (grouped by chapters).
+  CHAPTERS.forEach((ch, chIdx)=>{
+    // Chapter header
+    const header = document.createElement("div");
+    header.className = "statHeader";
+    header.textContent = ch.title;
+    elStats.appendChild(header);
 
-    const barrow=document.createElement("div"); barrow.className="barrow";
-    const bar=document.createElement("div"); bar.className="bar";
-    const inner=document.createElement("div"); inner.style.width=r.accuracy+"%";
-    bar.appendChild(inner);
-    const pct=document.createElement("div"); pct.className="pct"; pct.textContent=r.accuracy+"%";
-    barrow.appendChild(bar); barrow.appendChild(pct);
+    ch.ids.forEach(termId=>{
+      const item = BANK.find(x=>x.id===termId);
+      if(!item) return;
 
-    box.appendChild(top); box.appendChild(barrow);
-    elStats.appendChild(box);
+      const k = statKey(item);
+      const s = stats[k] || {correct:0, wrong:0, seen:0};
+      const acc = s.seen ? Math.round((s.correct/s.seen)*100) : 0;
+      const displayTerm = (lang==="zh") ? item.zh.term : item.en.term;
+
+      const box=document.createElement("div"); 
+      box.className="stat clickable";
+      if(current && current.id === termId) box.classList.add("active");
+      box.title = (lang==="zh") ? "点击直接复习这一条" : "Click to review this term";
+      box.onclick = ()=> {
+        const it = BANK.find(x=>x.id===termId);
+        if(!it) return;
+        setQuestion(it, {countSeen:true});
+      };
+
+      const top=document.createElement("div"); top.className="statTop";
+      const name=document.createElement("div"); name.className="statTerm"; name.textContent=displayTerm;
+      top.appendChild(name);
+
+      const meta=document.createElement("div"); meta.className="statMeta";
+      meta.textContent = (lang==="zh")
+        ? `看过 ${s.seen} · 对 ${s.correct} · 错 ${s.wrong} · 正确率 ${acc}%`
+        : `Seen ${s.seen} · ✓ ${s.correct} · ✗ ${s.wrong} · ${acc}%`;
+      box.appendChild(top);
+      box.appendChild(meta);
+
+      elStats.appendChild(box);
+    });
+
+    // extra spacing after each chapter
+    const spacer=document.createElement("div");
+    spacer.className="statSpacer";
+    elStats.appendChild(spacer);
   });
 }
 
@@ -598,13 +780,11 @@ function showFeedback(type, msg, showGold) {
   }
 }
 
-function pickNext() {
-  const weights = BANK.map(item=>{
-    const s = stats[statKey(item)] || {correct:0, wrong:0, seen:0};
-    return 1 + s.wrong*2 + (s.seen < 3 ? 1 : 0);
-  });
 
-  current = weightedPick(BANK, weights);
+function setQuestion(item, opts){
+  opts = opts || {};
+  const countSeen = (opts.countSeen !== false);
+  current = item;
   const v = viewOf(current);
   pool = shuffle(v.chunks);
   answer = [];
@@ -612,11 +792,31 @@ function pickNext() {
   elFeedback.style.display = "none";
   if(typeInput) typeInput.value = "";
 
-  const s = ensureStats(statKey(current));
-  s.seen += 1;
-  saveJSON(STATS_KEY, stats);
+  if(countSeen){
+    const s = ensureStats(statKey(current));
+    s.seen += 1;
+    saveJSON(STATS_KEY, stats);
+  }
 
   renderQuiz(); renderStats();
+}
+
+function pickNext() {
+  let item = null;
+
+  if(quizOrder === "sequential") {
+    item = BANK[seqIndex % BANK.length];
+    seqIndex = (seqIndex + 1) % BANK.length;
+    localStorage.setItem(SEQ_INDEX_KEY, String(seqIndex));
+  } else {
+    const weights = BANK.map(item=>{
+      const s = stats[statKey(item)] || {correct:0, wrong:0, seen:0};
+      return 1 + s.wrong*2 + (s.seen < 3 ? 1 : 0);
+    });
+    item = weightedPick(BANK, weights);
+  }
+
+  setQuestion(item, {countSeen:true});
 }
 
 function pickChunk(chunk) {
@@ -1020,12 +1220,19 @@ document.getElementById("btnClose").onclick=closeHistory;
 document.getElementById("backdrop").onclick=closeHistory;
 document.getElementById("btnClearAttempts").onclick=clearAttempts;
 
+quizOrderSel.onchange = function(){
+  quizOrder = quizOrderSel.value;
+  localStorage.setItem(QUIZORDER_KEY, quizOrder);
+  // keep current question; next click "Next" follows the chosen order
+};
+
 answerModeSel.onchange = function(){
   answerMode = answerModeSel.value;
   localStorage.setItem(ANSWERMODE_KEY, answerMode);
   lang = answerMode.startsWith("zh_") ? "zh" : "en";
   mode = answerMode.endsWith("_type") ? "type" : "order";
   applyUI();
+  renderStats();
   // reset current question UI (do not change stats)
   if(current){
     const v = viewOf(current);
