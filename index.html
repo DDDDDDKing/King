@@ -420,6 +420,15 @@ const CHAPTERS = [
   }
 ];
 
+// --- Ordered bank (chapter/table order) ---
+const BANK_BY_ID = Object.fromEntries(BANK.map(it=>[it.id, it]));
+const ORDERED_IDS = CHAPTERS.flatMap(ch=>ch.ids);
+// Keep only items that exist in BANK, preserving table order
+const ACTIVE_BANK = ORDERED_IDS.map(id=>BANK_BY_ID[id]).filter(Boolean);
+// Index lookup for sequential navigation and sidebar jumping
+const ORDER_INDEX = new Map(ACTIVE_BANK.map((it, idx)=>[it.id, idx]));
+
+
 
 const STATS_KEY = "biochem_stats_v5";
 const ATTEMPTS_KEY = "biochem_attempts_v5";
@@ -730,7 +739,7 @@ function renderStats() {
     elStats.appendChild(header);
 
     ch.ids.forEach(termId=>{
-      const item = BANK.find(x=>x.id===termId);
+      const item = BANK_BY_ID[termId];
       if(!item) return;
 
       const k = statKey(item);
@@ -743,9 +752,16 @@ function renderStats() {
       if(current && current.id === termId) box.classList.add("active");
       box.title = (lang==="zh") ? "点击直接复习这一条" : "Click to review this term";
       box.onclick = ()=> {
-        const it = BANK.find(x=>x.id===termId);
+        const it = BANK_BY_ID[termId];
         if(!it) return;
         setQuestion(it, {countSeen:true});
+        if(quizOrder === "sequential") {
+          const idx = ORDER_INDEX.get(termId);
+          if(typeof idx === "number") {
+            seqIndex = (idx + 1) % ACTIVE_BANK.length;
+            localStorage.setItem(SEQ_INDEX_KEY, String(seqIndex));
+          }
+        }
       };
 
       const top=document.createElement("div"); top.className="statTop";
@@ -805,15 +821,15 @@ function pickNext() {
   let item = null;
 
   if(quizOrder === "sequential") {
-    item = BANK[seqIndex % BANK.length];
-    seqIndex = (seqIndex + 1) % BANK.length;
+    item = ACTIVE_BANK[seqIndex % ACTIVE_BANK.length];
+    seqIndex = (seqIndex + 1) % ACTIVE_BANK.length;
     localStorage.setItem(SEQ_INDEX_KEY, String(seqIndex));
   } else {
-    const weights = BANK.map(item=>{
+    const weights = ACTIVE_BANK.map(item=>{
       const s = stats[statKey(item)] || {correct:0, wrong:0, seen:0};
       return 1 + s.wrong*2 + (s.seen < 3 ? 1 : 0);
     });
-    item = weightedPick(BANK, weights);
+    item = weightedPick(ACTIVE_BANK, weights);
   }
 
   setQuestion(item, {countSeen:true});
