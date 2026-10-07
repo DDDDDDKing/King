@@ -8,6 +8,21 @@ $$('[data-icon]').forEach(e=>e.innerHTML=icon(e.dataset.icon));
 let activeName=localStorage.getItem('wn-active')||'访客',events=[],state,view='today',page=1,filter='all',search='',listTab='mistakes',session=null,syncing=false,syncTimer,toastTimer,syncText='进度保存在此设备',dirty=false;
 let config={...window.WORDNEST_CONFIG,...readJSON('wn-github',{})};
 let token=sessionStorage.getItem('wn-token')||localStorage.getItem('wn-token')||'';
+// A family link carries device setup in the fragment, which is not sent to Pages.
+if(location.hash.startsWith('#family=')){
+ try{
+  const shared=new URLSearchParams(location.hash.slice(1)).get('family')||'';
+  if(/^github_pat_[A-Za-z0-9_]{40,240}$/.test(shared)){
+   const preset={...window.WORDNEST_CONFIG};
+   if(GH.validConfig(preset)){
+    config=preset;token=shared;
+    localStorage.setItem('wn-github',JSON.stringify(config));
+    localStorage.setItem('wn-token',token);sessionStorage.setItem('wn-token',token);
+    syncText='家庭同步已自动配置，请输入用户名';
+   }
+  }
+ }finally{history.replaceState(null,'',location.pathname+location.search);}
+}
 function readJSON(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}}
 const eventKey=(name=activeName)=>`wn-events-${WN.profileId(name)}`;
 function persist(){try{localStorage.setItem(eventKey(),JSON.stringify(events));return true;}catch{syncText='本机存储空间不足，请导出备份';toast(syncText);updateSync();return false;}}
