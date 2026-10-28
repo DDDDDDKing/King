@@ -17,6 +17,13 @@
  function fileUrl(c,name){return `${base(c)}/contents/${[c.folder||'progress',`user-${WN.profileId(name)}.json`].join('/').split('/').map(encodeURIComponent).join('/')}`;}
  function validConfig(c){return c&&/^[a-zA-Z0-9-]{1,39}$/.test(c.owner)&&/^[a-zA-Z0-9_.-]{1,100}$/.test(c.repo)&&typeof c.branch==='string'&&c.branch.length>0&&c.branch.length<=200&&/^[a-zA-Z0-9_/-]{1,100}$/.test(c.folder||'progress')&&!(c.folder||'progress').includes('..');}
  async function get(c,token,name){
+  if(!token){
+   const path=[c.owner,c.repo,c.branch,...(c.folder||'progress').split('/'),`user-${WN.profileId(name)}.json`].map(encodeURIComponent).join('/');
+   const r=await fetch('https://raw.githubusercontent.com/'+path+'?v='+Math.floor(Date.now()/60000),{cache:'no-store',signal:AbortSignal.timeout(20000)});
+   if(r.status===404)return {sha:null,events:[]};if(!r.ok)throw apiError(r,await r.text());
+   const data=await r.json();if(data.version!==1||WN.normalizeName(data.username)!==WN.normalizeName(name)||!Array.isArray(data.events)||data.events.some(e=>!WN.validEvent(e)))throw new Error('公开进度文件格式异常');
+   return {sha:null,events:data.events};
+  }
   let file;try{file=await request(fileUrl(c,name)+`?ref=${encodeURIComponent(c.branch)}`,token);}catch(e){if(e.status!==404)throw e;await request(`${base(c)}/branches/${encodeURIComponent(c.branch)}`,token);return {sha:null,events:[]};}
   let data;if(file.content){try{data=JSON.parse(decode(file.content));}catch(e){throw new Error('仓库进度文件无法读取，请先检查或恢复备份');}}
   else {const r=await fetch(fileUrl(c,name)+`?ref=${encodeURIComponent(c.branch)}`,{headers:{Accept:'application/vnd.github.raw+json',...(token?{Authorization:`Bearer ${token}`}:{})},cache:'no-store',signal:AbortSignal.timeout(20000)});if(!r.ok)throw apiError(r,await r.text());data=await r.json();}
