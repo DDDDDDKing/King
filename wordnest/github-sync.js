@@ -31,14 +31,27 @@
   if(data.events.some(e=>!WN.validEvent(e)))throw new Error('进度文件包含无法识别的记录，请恢复有效备份');
   return {sha:file.sha,events:data.events};
  }
+ const indexed=new Set();
+ async function ensureIndex(c,token,name){
+  const filename=`user-${WN.profileId(name)}.json`,key=[c.owner,c.repo,c.branch,c.folder,filename].join('|');if(indexed.has(key))return;
+  const url=`${base(c)}/contents/${(c.folder||'progress').split('/').map(encodeURIComponent).join('/')}/index.json`;
+  for(let i=0;i<4;i++){
+   let file=null;try{file=await request(url+'?ref='+encodeURIComponent(c.branch),token);}catch(e){if(e.status!==404)throw e;}
+   const old=file?JSON.parse(decode(file.content)): {version:1,files:[]};if(old.version!==1||!Array.isArray(old.files))throw new Error('档案索引格式异常，请检查仓库');
+   if(old.files.includes(filename)){indexed.add(key);return;}
+   const files=[...new Set([...old.files.filter(f=>/^user-[a-f0-9]+\.json$/.test(f)),filename])].sort();
+   try{await request(url,token,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'WordNest: index family profiles [skip ci]',branch:c.branch,content:encode(JSON.stringify({version:1,files})),...(file?{sha:file.sha}:{})})});indexed.add(key);return;}
+   catch(e){if(![409,422].includes(e.status)||i===3)throw e;await new Promise(r=>setTimeout(r,250*(i+1)));}
+  }
+ }
  async function sync(c,token,name,local,latest=()=>local,onMerge=()=>{}){
   if(!validConfig(c))throw new Error('请先填写正确的仓库设置');if(!token)throw new Error('请让家长为此设备设置仓库授权');
   for(let attempt=0;attempt<4;attempt++){
    const remote=await get(c,token,name);const events=WN.merge(remote.events,latest());onMerge(events);
-   if(JSON.stringify(WN.merge([],remote.events))===JSON.stringify(events))return {events,wrote:false};
+   if(JSON.stringify(WN.merge([],remote.events))===JSON.stringify(events)){if(remote.sha)await ensureIndex(c,token,name);return {events,wrote:false};}
    const content=encode(JSON.stringify({version:1,username:WN.normalizeName(name),updatedAt:new Date().toISOString(),events}));
    const body={message:'WordNest: save learning progress [skip ci]',content,branch:c.branch,...(remote.sha?{sha:remote.sha}:{})};
-   try{await request(fileUrl(c,name),token,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return {events,wrote:true};}
+   try{await request(fileUrl(c,name),token,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});await ensureIndex(c,token,name);return {events,wrote:true};}
    catch(e){if(e.status!==409&&e.status!==422)throw e;if(attempt===3)throw new Error('另一台设备正在保存，请稍后重试同步');await new Promise(r=>setTimeout(r,250*(attempt+1)));}
   }
  }
