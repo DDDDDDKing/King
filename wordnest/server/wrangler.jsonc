@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wordnest-family-sync",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "d1_databases": [{"binding":"DB","database_name":"wordnest-progress","migrations_dir":"migrations"}],
+  "vars": {"ALLOWED_ORIGIN":"https://ddddddking.github.io","VAPID_SUBJECT":"https://ddddddking.github.io/King/wordnest/"},
+  "triggers": {"crons":["*/5 * * * *"]}
+}

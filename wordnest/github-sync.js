@@ -12,14 +12,14 @@
   else if(r.status===404)label='仓库、分支或进度文件不存在，或令牌无法访问（404）';
   const error=new Error(label);error.status=r.status;error.detail=detail;error.apiMessage=message;error.rateLimited=limited;return error;
  }
- async function request(url,token,options={}){const r=await fetch(url,{...options,headers:{Accept:'application/vnd.github+json',...(token?{Authorization:`Bearer ${token}`} : {}),...options.headers},cache:'no-store'});if(!r.ok)throw apiError(r,await r.text(),options.method||'GET');return r.json();}
+ async function request(url,token,options={}){const r=await fetch(url,{...options,headers:{Accept:'application/vnd.github+json',...(token?{Authorization:`Bearer ${token}`} : {}),...options.headers},cache:'no-store',signal:AbortSignal.timeout(20000)});if(!r.ok)throw apiError(r,await r.text(),options.method||'GET');return r.json();}
  function base(c){return `https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}`;}
  function fileUrl(c,name){return `${base(c)}/contents/${[c.folder||'progress',`user-${WN.profileId(name)}.json`].join('/').split('/').map(encodeURIComponent).join('/')}`;}
  function validConfig(c){return c&&/^[a-zA-Z0-9-]{1,39}$/.test(c.owner)&&/^[a-zA-Z0-9_.-]{1,100}$/.test(c.repo)&&typeof c.branch==='string'&&c.branch.length>0&&c.branch.length<=200&&/^[a-zA-Z0-9_/-]{1,100}$/.test(c.folder||'progress')&&!(c.folder||'progress').includes('..');}
  async function get(c,token,name){
   let file;try{file=await request(fileUrl(c,name)+`?ref=${encodeURIComponent(c.branch)}`,token);}catch(e){if(e.status!==404)throw e;await request(`${base(c)}/branches/${encodeURIComponent(c.branch)}`,token);return {sha:null,events:[]};}
   let data;if(file.content){try{data=JSON.parse(decode(file.content));}catch(e){throw new Error('仓库进度文件无法读取，请先检查或恢复备份');}}
-  else {const r=await fetch(fileUrl(c,name)+`?ref=${encodeURIComponent(c.branch)}`,{headers:{Accept:'application/vnd.github.raw+json',...(token?{Authorization:`Bearer ${token}`}:{})},cache:'no-store'});if(!r.ok)throw apiError(r,await r.text());data=await r.json();}
+  else {const r=await fetch(fileUrl(c,name)+`?ref=${encodeURIComponent(c.branch)}`,{headers:{Accept:'application/vnd.github.raw+json',...(token?{Authorization:`Bearer ${token}`}:{})},cache:'no-store',signal:AbortSignal.timeout(20000)});if(!r.ok)throw apiError(r,await r.text());data=await r.json();}
   if(data.version!==1||WN.normalizeName(data.username)!==WN.normalizeName(name)||!Array.isArray(data.events))throw new Error('进度文件格式或用户名不匹配，请检查仓库');
   if(data.events.some(e=>!WN.validEvent(e)))throw new Error('进度文件包含无法识别的记录，请恢复有效备份');
   return {sha:file.sha,events:data.events};

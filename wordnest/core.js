@@ -11,7 +11,8 @@
   if(e.kind==='placementAnswer')return Number.isInteger(e.data.wordId)&&e.data.wordId>=1&&e.data.wordId<=6000&&typeof e.data.correct==='boolean';
   if(e.kind==='placement')return Number.isInteger(e.data.startIndex)&&e.data.startIndex>=0&&e.data.startIndex<=6000;
   if(e.kind==='review')return Number.isInteger(e.data.wordId)&&e.data.wordId>=1&&e.data.wordId<=6000&&[0,1,2,3].includes(e.data.grade);
-  if(e.kind==='plan')return typeof e.data.day==='string'&&Array.isArray(e.data.newIds)&&Array.isArray(e.data.reviewIds)&&e.data.newIds.length<=30&&e.data.reviewIds.length<=30;
+  if(e.kind==='plan')return /^\d{4}-\d{2}-\d{2}$/.test(e.data.day)&&Array.isArray(e.data.newIds)&&Array.isArray(e.data.reviewIds)&&e.data.newIds.length<=30&&e.data.reviewIds.length<=30&&[...e.data.newIds,...e.data.reviewIds].every(id=>Number.isInteger(id)&&id>=1&&id<=6000);
+  if(e.kind==='favorite')return Number.isInteger(e.data.wordId)&&e.data.wordId>=1&&e.data.wordId<=6000&&typeof e.data.value==='boolean';
   return true;
  }
  function advance(prev,grade,at){
