@@ -1,5 +1,5 @@
-const CACHE='wordnest-admin2';
-const FILES=['./','./index.html','./style.css?v=admin2','./config.js?v=admin2','./vocab.js','./core.js?v=admin2','./github-sync.js?v=admin2','./cloud-sync.js?v=admin2','./reminders.js?v=admin2','./app.js?v=admin2','./favicon.svg','./manifest.webmanifest','./app-icon.svg'];
+const CACHE='wordnest-sync3';
+const FILES=['./','./index.html','./style.css?v=sync3','./config.js?v=sync3','./vocab.js','./core.js?v=sync3','./github-sync.js?v=sync3','./prefs-sync.js?v=sync3','./cloud-sync.js?v=sync3','./reminders.js?v=sync3','./app.js?v=sync3','./favicon.svg','./manifest.webmanifest','./app-icon.svg'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)));self.skipWaiting();});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('wordnest-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==self.location.origin||!u.pathname.startsWith(new URL('./',self.location.href).pathname)||u.pathname.includes('/progress/')||u.pathname.includes('/server/'))return;e.respondWith(fetch(e.request,{cache:'no-cache',signal:AbortSignal.timeout(10000)}).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));}return r;}).catch(async()=>await caches.match(e.request)||(e.request.mode==='navigate'?await caches.match('./index.html'):null)||Response.error()));});
