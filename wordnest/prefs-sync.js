@@ -14,7 +14,7 @@
   if(!remote.length&&GH.validConfig(c)){base=WN.merge(base,(await GH.get(c,'',name)).events);}
   const all=WN.merge(base,latest()),known=new Set(remote.map(e=>e.id)),missing=all.filter(e=>!known.has(e.id));
   // Immutable batches: simultaneous devices write separate keys, never replace a profile.
-  for(let i=0;i<missing.length;i+=100){const batch=missing.slice(i,i+100),hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(batch.map(e=>e.id).join('|'))),id=Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join('');await query('user-'+WN.profileId(name),'b_'+id,{events:batch});}
+  for(let i=0;i<missing.length;i+=100){const batch=missing.slice(i,i+100),id=Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join('');await query('user-'+WN.profileId(name),'b_'+id,{events:batch});}
   const id=WN.profileId(name);if(!indexed.has(id)){await query('profiles','u_'+id,{username:WN.normalizeName(name),version:1});indexed.add(id);}
   const saved=WN.merge(remote,missing);onMerge(WN.merge(saved,latest()));return {events:saved,wrote:missing.length>0};
  }
