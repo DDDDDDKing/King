@@ -23,7 +23,7 @@ assert(html.includes("'心晴-离线自评.html',OFFLINE_HTML"));checks++;
 new vm.Script(script);checks++;
 
 // Added instruments: independent reference cases and branching rules.
-ok(Object.keys(scales).length,36);
+ok(Object.keys(scales).length,37);
 function fromTotal(n,t,max){return Array.from({length:n},(_,i)=>Math.max(0,Math.min(max,t-i*max)))}
 for(const [raw,total,positive] of [[0,0,true],[12,48,true],[13,52,false],[25,100,false]]){const r=score('WHO5',fromTotal(5,raw,5));ok(r.total,total);ok(r.positive,positive)}
 for(const [t,b]of [[0,0],[12,0],[13,1],[24,1]]){const r=score('K6',fromTotal(6,t,4));ok(r.total,t);ok(r.band,b)}
@@ -56,7 +56,7 @@ const manual=c.scoreManual;
 for(const[id,n,m]of [['BDI2',21,3],['BAI',21,3],['PDSSSR',7,4],['LSASSR',48,3],['HCL32',32,1]]){ok(manual(id,Array(n).fill(0)).total,0);ok(manual(id,Array(n).fill(m)).total,n*m);for(const a of [Array(n).fill(null),Array(n-1).fill(0),Array(n).fill(m+1),Array(n).fill(-1)]){assert.throws(()=>manual(id,a));checks++;}}
 const lsas=manual('LSASSR',Array.from({length:48},(_,i)=>i%2===0?3:1));ok(lsas.fear,72);ok(lsas.avoid,24);ok(lsas.total,96);
 assert(html.includes('id="manualTool"')&&html.includes('id="manualInputs"'));checks++;
-console.log(JSON.stringify({status:'passed',checks,exhaustivePHQ9Patterns:4**9,allZungRawScores:'20–80',instruments:36,scope:'36 scoring schemas and 13 question-free calculators, bounds, every reverse item, skip logic, GDS15 and ASRS exhaustive cases, crisis flags, clinical thresholds, privacy/CSP, pristine offline export and JS syntax'},null,2));
+console.log(JSON.stringify({status:'passed',checks,exhaustivePHQ9Patterns:4**9,allZungRawScores:'20–80',instruments:37,scope:'37 scoring schemas and 13 question-free calculators, bounds, every reverse item, skip logic, GDS15 and ASRS exhaustive cases, crisis flags, clinical thresholds, privacy/CSP, pristine offline export and JS syntax'},null,2));
 
 
 // Uploaded questionnaires: expanded regression checks.
@@ -68,7 +68,7 @@ const core=script.slice(script.indexOf('const VERSION'),script.indexOf('const $=
 const c=vm.createContext({});vm.runInContext(core+';this.api={scales,sources,scoreScale,scoreManual};',c);
 const {scales,sources,scoreScale:score,scoreManual:manual}=c.api;
 let checks=0;const eq=(a,b)=>{assert.deepEqual(JSON.parse(JSON.stringify(a)),b);checks++;};
-eq(Object.keys(scales).length,36);
+eq(Object.keys(scales).length,37);
 for(const [id,s]of Object.entries(scales)){
  assert(s.items.length>0&&s.translation&&s.rule&&s.group,id);checks++;
  for(const i of s.refs){assert(sources[i]&&/^https?:\/\//.test(sources[i][1]),id+' reference');checks++;}
@@ -133,4 +133,27 @@ assert.equal(require('node:crypto').createHash('sha256').update(html.match(/<sty
 assert(!html.includes('id="research"'));checks++;
 console.log(JSON.stringify({status:'passed',checks,instruments:Object.keys(scales).length,scope:'Expanded scoring, N/A denominators, reverse keys, 13 manual tools, questionnaire registry and preserved visual style'},null,2));
 
+}
+
+
+{
+  const assert = require('node:assert/strict');
+  const fs = require('node:fs');
+  const vm = require('node:vm');
+  const html = fs.readFileSync(__dirname + '/index.html', 'utf8');
+  const script = html.match(/<script id="app">([\s\S]*?)<\/script>/)[1];
+  const core = script.slice(script.indexOf('const VERSION'), script.indexOf('const $='));
+  const context = vm.createContext({btoa, atob});
+  vm.runInContext(core + ';this.api={encodeAssignment,decodeAssignment,scoreScale};', context);
+  const {encodeAssignment,decodeAssignment,scoreScale} = context.api;
+  const plan = {v:1,id:'XQ-DEMO',scales:['PHQ2','HCL32','GAD7']};
+  assert.equal(JSON.stringify(decodeAssignment(encodeAssignment(plan))), JSON.stringify(plan));
+  for (const bad of [[], ['HCL32','HCL32'], ['UNKNOWN'], ['__proto__']]) {
+    assert.throws(() => encodeAssignment({...plan,scales:bad}));
+  }
+  assert.throws(() => decodeAssignment('bad-token'));
+  for (const total of [0,13,14,32]) {
+    assert.equal(scoreScale('HCL32',Array.from({length:32},(_,i)=>Number(i<total))).total,total);
+  }
+  console.log('HCL-32 score boundaries and assignment link validation passed');
 }
