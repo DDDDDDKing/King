@@ -1,6 +1,6 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const html=fs.readFileSync(fs.existsSync(__dirname+'/index.html')?__dirname+'/index.html':__dirname+'/dist/index.html','utf8');const script=html.match(/<script id="app">([\s\S]*?)<\/script>/)[1];
-const core=script.slice(script.indexOf('const VERSION'),script.indexOf('const $='));const c=vm.createContext({});vm.runInContext(core+';this.scales=scales;this.scoreScale=scoreScale;this.scorePSS10=scorePSS10;',c);const {scales,scoreScale:score}=c;
+const core=script.slice(script.indexOf('const VERSION'),script.indexOf('const $='));const c=vm.createContext({});vm.runInContext(core+';this.scales=scales;this.scoreScale=scoreScale;this.scorePSS10=scorePSS10;this.scoreManual=scoreManual;',c);const {scales,scoreScale:score}=c;
 // Independent expected boundaries, not read from implementation configuration.
 const expected={PHQ9:[[4,0],[5,1],[9,1],[10,2],[14,2],[15,3],[19,3],[20,4],[27,4]],GAD7:[[4,0],[5,1],[9,1],[10,2],[14,2],[15,3],[21,3]],PHQ4:[[2,0],[3,1],[5,1],[6,2],[8,2],[9,3],[12,3]],PHQ2:[[2,0],[3,1],[6,1]],GAD2:[[2,0],[3,1],[6,1]]};
 function sumAnswers(n,total){return Array.from({length:n},(_,i)=>Math.max(0,Math.min(3,total-3*i)))}
@@ -23,7 +23,7 @@ assert(html.includes("'心晴-离线自评.html',OFFLINE_HTML"));checks++;
 new vm.Script(script);checks++;
 
 // Added instruments: independent reference cases and branching rules.
-ok(Object.keys(scales).length,21);
+ok(Object.keys(scales).length,22);
 function fromTotal(n,t,max){return Array.from({length:n},(_,i)=>Math.max(0,Math.min(max,t-i*max)))}
 for(const [raw,total,positive] of [[0,0,true],[12,48,true],[13,52,false],[25,100,false]]){const r=score('WHO5',fromTotal(5,raw,5));ok(r.total,total);ok(r.positive,positive)}
 for(const [t,b]of [[0,0],[12,0],[13,1],[24,1]]){const r=score('K6',fromTotal(6,t,4));ok(r.total,t);ok(r.band,b)}
@@ -46,4 +46,14 @@ for(const vector of [Array(20).fill(0),Array(20).fill(3),Array.from({length:20},
 for(let j=0;j<20;j++){const a=Array(20).fill(0);a[j]=1;const r=score('BISBAS',a),base=score('BISBAS',Array(20).fill(0));for(let k=0;k<4;k++)ok(r.subscales[k].total-base.subscales[k].total,bk[k].includes(j+1)?([1,18].includes(j+1)?-1:1):0)}
 const pss=c.scorePSS10;ok(pss([0,0,0,4,4,0,4,4,0,0]).total,0);ok(pss([4,4,4,0,0,4,0,0,4,4]).total,40);ok(pss(Array(10).fill(2)).total,20);assert.throws(()=>pss(Array(10).fill(null)));checks++;
 assert(html.includes('id="pssInputs"')&&html.includes('id="calculatePSS"'));checks++;
-console.log(JSON.stringify({status:'passed',checks,exhaustivePHQ9Patterns:4**9,allZungRawScores:'20–80',instruments:21,scope:'All 21 scoring schemas and PSS-10 calculator, bounds, every reverse item, skip logic, GDS15 and ASRS exhaustive cases, crisis flags, clinical thresholds, privacy/CSP, pristine offline export and JS syntax'},null,2));
+// Independent 1985 Table 9 EPQ-R short keys; no crossover between dimensions.
+const epqYes=[[10,14,22,31,39],[3,7,11,15,19,23,32,36,44,48],[1,5,9,13,17,21,25,30,34,38,42,46],[4,16,45]];
+const epqNo=[[2,6,18,26,28,35,43],[27,41],[],[8,12,20,24,29,33,37,40,47]];
+ok(scales.EPQR.items.length,48);ok(new Set(epqYes.flat().concat(epqNo.flat())).size,48);
+for(let k=0;k<4;k++){let a=Array(48).fill(0);for(const i of epqYes[k])a[i-1]=1;for(const i of epqNo[k])a[i-1]=0;ok(score('EPQR',a).subscales[k].total,12);for(const i of epqYes[k])a[i-1]=0;for(const i of epqNo[k])a[i-1]=1;ok(score('EPQR',a).subscales[k].total,0);}
+for(let i=1;i<=48;i++){const a=Array(48).fill(0),base=score('EPQR',a);a[i-1]=1;const r=score('EPQR',a);ok(r.total,null);for(let k=0;k<4;k++)ok(r.subscales[k].total-base.subscales[k].total,epqYes[k].includes(i)?1:epqNo[k].includes(i)?-1:0);}
+const manual=c.scoreManual;
+for(const[id,n,m]of [['BDI2',21,3],['BAI',21,3],['PDSSSR',7,4],['LSASSR',48,3],['HCL32',32,1]]){ok(manual(id,Array(n).fill(0)).total,0);ok(manual(id,Array(n).fill(m)).total,n*m);for(const a of [Array(n).fill(null),Array(n-1).fill(0),Array(n).fill(m+1),Array(n).fill(-1)]){assert.throws(()=>manual(id,a));checks++;}}
+const lsas=manual('LSASSR',Array.from({length:48},(_,i)=>i%2===0?3:1));ok(lsas.fear,72);ok(lsas.avoid,24);ok(lsas.total,96);
+assert(html.includes('id="manualTool"')&&html.includes('id="manualInputs"'));checks++;
+console.log(JSON.stringify({status:'passed',checks,exhaustivePHQ9Patterns:4**9,allZungRawScores:'20–80',instruments:22,scope:'All 22 scoring schemas and six question-free calculators, bounds, every reverse item, skip logic, GDS15 and ASRS exhaustive cases, crisis flags, clinical thresholds, privacy/CSP, pristine offline export and JS syntax'},null,2));
