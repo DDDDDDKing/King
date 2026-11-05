@@ -23,7 +23,7 @@ assert(html.includes("'心晴-离线自评.html',OFFLINE_HTML"));checks++;
 new vm.Script(script);checks++;
 
 // Added instruments: independent reference cases and branching rules.
-ok(Object.keys(scales).length,22);
+ok(Object.keys(scales).length,36);
 function fromTotal(n,t,max){return Array.from({length:n},(_,i)=>Math.max(0,Math.min(max,t-i*max)))}
 for(const [raw,total,positive] of [[0,0,true],[12,48,true],[13,52,false],[25,100,false]]){const r=score('WHO5',fromTotal(5,raw,5));ok(r.total,total);ok(r.positive,positive)}
 for(const [t,b]of [[0,0],[12,0],[13,1],[24,1]]){const r=score('K6',fromTotal(6,t,4));ok(r.total,t);ok(r.band,b)}
@@ -36,7 +36,7 @@ ok(score('SIDAS',[0,null,null,null,null]).total,0);ok(score('SIDAS',[0,0,10,10,1
 for(let code=0;code<5**6;code++){let v=code;const a=[];for(let i=0;i<6;i++){a.push(v%5);v=Math.floor(v/5)}const expect=a.filter((n,i)=>n>=(i<3?2:3)).length;const r=score('ASRS6',a);assert.equal(r.total,expect);assert.equal(r.positive,expect>=4)}checks+=5**6*2;
 ok(score('AUDIT',[4,4,4,4,4,4,4,4,2,2]).total,40);ok(score('AUDIT',[0,null,null,null,null,null,null,null,2,1]).total,6);ok(score('AUDITC',[0,null,null]).total,0);ok(score('AUDITC',[4,4,4]).total,12);for(const[t,b]of[[7,0],[8,1],[15,1],[16,2],[19,2],[20,3]]){const a=fromTotal(8,t,4).concat([0,0]);a[0]||=1;const r=score('AUDIT',a);ok(r.total,t);ok(r.band,b)}
 ok(score('FTND',[0,1,1,1,1,3]).total,10);ok(score('FTND',[3,0,0,0,0,0]).total,0);for(const a of [[0,0,0,0],[1,0,0,0],[1,1,0,0],[1,1,1,1]])ok(score('CAGE',a).total,a.reduce((x,y)=>x+y));
-for(const[id,s]of Object.entries(scales)){const zero=Array(s.items.length).fill(0);if(id==='SIDAS'||id==='AUDIT'||id==='AUDITC')zero[0]=1;for(let i=0;i<zero.length;i++){const a=zero.slice();a[i]=s.itemOptions?s.itemOptions[i].length:s.options.length;assert.throws(()=>score(id,a));checks++;}}
+for(const[id,s]of Object.entries(scales)){const zero=Array(s.items.length).fill(0);if(id==='SIDAS'||id==='AUDIT'||id==='AUDITC'||id==='PCPTSD5')zero[0]=1;for(let i=0;i<zero.length;i++){const a=zero.slice();a[i]=s.itemOptions?s.itemOptions[i].length:s.options.length;assert.throws(()=>score(id,a));checks++;}}
 assert(html.includes('data-journey="anxiety"')&&html.includes('data-journey="depression"')&&html.includes('data-journey="both"'));checks++;
 assert(!html.includes('localStorage.clear'));checks++;
 
@@ -56,4 +56,81 @@ const manual=c.scoreManual;
 for(const[id,n,m]of [['BDI2',21,3],['BAI',21,3],['PDSSSR',7,4],['LSASSR',48,3],['HCL32',32,1]]){ok(manual(id,Array(n).fill(0)).total,0);ok(manual(id,Array(n).fill(m)).total,n*m);for(const a of [Array(n).fill(null),Array(n-1).fill(0),Array(n).fill(m+1),Array(n).fill(-1)]){assert.throws(()=>manual(id,a));checks++;}}
 const lsas=manual('LSASSR',Array.from({length:48},(_,i)=>i%2===0?3:1));ok(lsas.fear,72);ok(lsas.avoid,24);ok(lsas.total,96);
 assert(html.includes('id="manualTool"')&&html.includes('id="manualInputs"'));checks++;
-console.log(JSON.stringify({status:'passed',checks,exhaustivePHQ9Patterns:4**9,allZungRawScores:'20–80',instruments:22,scope:'All 22 scoring schemas and six question-free calculators, bounds, every reverse item, skip logic, GDS15 and ASRS exhaustive cases, crisis flags, clinical thresholds, privacy/CSP, pristine offline export and JS syntax'},null,2));
+console.log(JSON.stringify({status:'passed',checks,exhaustivePHQ9Patterns:4**9,allZungRawScores:'20–80',instruments:36,scope:'36 scoring schemas and 13 question-free calculators, bounds, every reverse item, skip logic, GDS15 and ASRS exhaustive cases, crisis flags, clinical thresholds, privacy/CSP, pristine offline export and JS syntax'},null,2));
+
+
+// Uploaded questionnaires: expanded regression checks.
+{
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const html=fs.readFileSync(fs.existsSync(__dirname+'/index.html')?__dirname+'/index.html':__dirname+'/dist/index.html','utf8');
+const script=html.match(/<script id="app">([\s\S]*?)<\/script>/)[1];
+const core=script.slice(script.indexOf('const VERSION'),script.indexOf('const $='));
+const c=vm.createContext({});vm.runInContext(core+';this.api={scales,sources,scoreScale,scoreManual};',c);
+const {scales,sources,scoreScale:score,scoreManual:manual}=c.api;
+let checks=0;const eq=(a,b)=>{assert.deepEqual(JSON.parse(JSON.stringify(a)),b);checks++;};
+eq(Object.keys(scales).length,36);
+for(const [id,s]of Object.entries(scales)){
+ assert(s.items.length>0&&s.translation&&s.rule&&s.group,id);checks++;
+ for(const i of s.refs){assert(sources[i]&&/^https?:\/\//.test(sources[i][1]),id+' reference');checks++;}
+ if(s.itemOptions)eq(s.itemOptions.length,s.items.length);
+}
+// PC-PTSD-5 has a non-scored exposure gate, followed by exactly five scored items.
+for(let mask=0;mask<64;mask++){
+ const a=Array.from({length:6},(_,i)=>(mask>>i)&1);
+ eq(score('PCPTSD5',a).total,a[0]?a.slice(1).reduce((s,n)=>s+n,0):0);
+}
+eq(score('PCPTSD5',[0,null,null,null,null,null]).skip,[1,2,3,4,5]);
+assert.throws(()=>score('PCPTSD5',[1,null,null,null,null,null]));checks++;
+// B-IPF N/A values do not enter the numerator or denominator.
+eq(score('BIPF',[7,7,7,7,7,7,6]).total,100);
+eq(score('BIPF',[7,7,0,6,7,7,3]).total,50);
+eq(score('BIPF',[7,7,0,6,7,7,3]).applicable,3);
+eq(score('BIPF',[7,7,7,7,7,7,1]).total,16.67);
+assert.throws(()=>score('BIPF',Array(7).fill(7)));checks++;
+// CBI uses means, scales 0-100 and reverses only the leisure-energy item.
+const min=Array(19).fill(0);min[12]=4;
+const max=Array(19).fill(4);max[12]=0;
+eq(score('CBI',min).subscales.map(x=>x.total),[0,0,0]);
+eq(score('CBI',max).subscales.map(x=>x.total),[100,100,100]);
+const na=Array(6).fill(0).concat(Array(13).fill(5));
+eq(score('CBI',na).subscales.map(x=>x.total),[0,null,null]);
+const partial=min.slice();partial[6]=5;assert.throws(()=>score('CBI',partial));checks++;
+eq(score('CBI',Array(19).fill(0)).subscales[1].total,14.29);
+// Item direction is independently keyed. No aggregate personality score is produced.
+const reverseIPIP=[2,4,6,8,10,12,14,16,18,19,20,22,24,26,28,29,30,32,34,36,38,39,44,46];
+for(let j=0;j<50;j++){
+ const a=Array(50).fill(2),base=score('IPIP50',a);a[j]=3;const r=score('IPIP50',a);
+ eq(r.total,null);
+ for(let d=0;d<5;d++)eq(r.subscales[d].total-base.subscales[d].total,j%5===d?(reverseIPIP.includes(j+1)?-1:1):0);
+}
+eq(score('TIPI',[4,0,0,0,0,1,0,0,0,0]).subscales[0].total,5.5);
+eq(score('TIPI',Array(10).fill(3)).subscales.map(x=>x.total),[4,4,4,4,4]);
+const rsesHigh=Array.from({length:10},(_,i)=>[2,5,6,8,9].includes(i+1)?0:3);
+eq(score('RSES',rsesHigh).total,30);eq(score('RSES',rsesHigh.map(v=>3-v)).total,0);
+eq(score('GSE',Array(10).fill(0)).total,10);eq(score('GSE',Array(10).fill(3)).total,40);
+eq(score('SWLS',Array(5).fill(0)).total,5);eq(score('SWLS',Array(5).fill(6)).total,35);
+eq(score('FS',Array(8).fill(0)).total,8);eq(score('FS',Array(8).fill(6)).total,56);
+const sp=Array.from({length:12},(_,i)=>[1,3,5,7,10,12].includes(i+1)?4:0);
+eq(score('SPANE',sp).subscales.map(x=>x.total),[30,6,24]);
+eq(score('SPANE',sp.map(v=>4-v)).subscales.map(x=>x.total),[6,30,-24]);
+eq(score('LSASSR',Array.from({length:48},(_,i)=>i%2?1:2)).total,72);
+eq(score('LSASSR',Array.from({length:48},(_,i)=>i%2?1:2)).domains.map(x=>x.total),[48,24]);
+eq(score('PCL5',Array(20).fill(4)).total,80);eq(score('PCL5',Array(20).fill(4)).domains.map(x=>x.total),[20,8,28,24]);
+for(let i=0;i<7;i++){const a=Array(7).fill(0);a[i]=4;eq(score('PDSSSR',a).total,4);}
+eq(score('PDSSSR',Array(7).fill(4)).total,28);
+eq(score('PHQ8',Array(8).fill(3)).total,24);eq(score('PHQ8',Array(8).fill(3)).safety,false);
+// QIDS must select domain maxima instead of summing all sixteen scored answers.
+eq(manual('QIDS',Array(16).fill(3)).total,27);
+const q=Array(16).fill(0);q[0]=1;q[1]=2;q[2]=3;q[5]=2;q[8]=1;q[14]=1;q[15]=3;
+eq(manual('QIDS',q).total,8);
+eq(manual('HADS',Array.from({length:14},(_,i)=>i%2?1:3)).anxiety,21);
+eq(manual('HADS',Array.from({length:14},(_,i)=>i%2?1:3)).depression,7);
+eq(manual('YBOCS',Array.from({length:10},(_,i)=>i<5?1:4)),{total:25,obsessions:5,compulsions:20});
+const ep=Array(10).fill(0);ep[9]=1;eq(manual('EPDS',ep).safety,true);
+assert(!/\bfetch\s*\(|XMLHttpRequest|sendBeacon|WebSocket|EventSource|serviceWorker|<script[^>]+src=|<iframe|<form\b/.test(html));checks++;
+new vm.Script(script);checks++;
+assert.equal(require('node:crypto').createHash('sha256').update(html.match(/<style>([\s\S]*?)<\/style>/)[1]).digest('hex'),'abec5707e9c4afb56ee9f677de89be1243d709f0d4e1cad95ef51ebfc40d47bb');checks++;
+assert(!html.includes('id="research"'));checks++;
+console.log(JSON.stringify({status:'passed',checks,instruments:Object.keys(scales).length,scope:'Expanded scoring, N/A denominators, reverse keys, 13 manual tools, questionnaire registry and preserved visual style'},null,2));
+
+}
