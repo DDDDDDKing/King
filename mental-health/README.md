@@ -1,118 +1,84 @@
-# 心晴 · 焦虑与抑郁自评 2.0
+# 心晴：浏览器本地自评工具
 
-网站：https://ddddddking.github.io/King/mental-health/
+在线地址：https://ddddddking.github.io/King/mental-health/
 
-面向已经感到困扰的成年人，用来整理感受与就诊前沟通。不是诊断、处方、医疗监护或经过独立临床验证的医院评定系统。
+版本2.2 / 2026-11-05。依据用户上传的“心晴科研原型.zip”整合问卷数据与计分规则，保留线上2.1版本的完整CSS、配色、首页三条困扰路径、卡片、连续填写、结果和隐私交互。没有采用压缩包的研究工作台、导入面板或新导航。
 
-## 这次改动
+## 本次新增
 
-- 首页改为“我觉得有焦虑的情况 / 我觉得有抑郁的情况 / 两种情况都有”，直接进入完整问卷，不要求先做两题或四题初筛。
-- 可调整清单、连续填写、跳过整份问卷、查看本次结果概览、主动本机保存与导出。
-- 22个实际可填写问卷（含长短版本），按主题过滤与搜索。没有把专业/授权工具的资料入口算作可填写问卷。
-- 自伤/自杀求助入口始终可见；SIDAS独立跳题与反向计分，无“总分低就安全”的自动判定。
-- 三条路径默认选择4–5项互补问卷，可自由增删。不同分数不相加，不输出综合患病概率。同类工具可二选一，不以数量替代临床需要。
+在原22份可填写问卷基础上新增14份，共36份（包含长短版本，不能解释为36个独立心理构念）：
 
-## 问卷及计分版本
+| 新增完整问卷 | 计分与版本说明 |
+| --- | --- |
+| PDSS-SR | 7项各0–4，总0–28，另报七项平均0–4；不套用访谈他评PDSS分档 |
+| LSAS-SR | 24情境各有恐惧和回避评分，48个评分项；两维各0–72、总0–144 |
+| PHQ-8 | 8项各0–3，总0–24，不包含自杀条目，不能承担安全询问 |
+| PCL-5 | 20项0–4，总0–80，另报B/C/D/E四簇原始分；不自动输出DSM诊断 |
+| PC-PTSD-5 | 创伤暴露入口不计分，否则跳过后5项并计0；是则5项各是1分 |
+| B-IPF | 7领域按适用项求和÷(6×适用项数)×100；不适用不进入分母，全不适用不计算 |
+| GSE-10 | 10项1–4，无反向，总10–40 |
+| RSES | 本页题序2/5/6/8/9反向，0–30；不混用不同中文题序 |
+| SWLS | 5项1–7，总5–35 |
+| FS-8 | 8项1–7，总8–56 |
+| SPANE | P/N各6–30，另算P−N，范围−24至24；不把12项合并为总分 |
+| CBI-19 | 个人/工作/服务对象分别平均0–100，第13项反向；领域不适用不记0 |
+| IPIP-BFFM-50 | 五维各10–50，按官方方向计分；第四维是情绪稳定性 |
+| TIPI-10 | 2/4/6/8/10反向，每维两项平均1–7，无人格总分 |
 
-| 问卷 | 本版采用的规则 |
-|---|---|
-| PHQ-9 | 过去2周，0–27；分档0–4/5–9/10–14/15–19/20–27；≥10提示进一步评估；第9项>0独立安全提示 |
-| GAD-7 | 过去2周，0–21；分档0–4/5–9/10–14/15–21；采用原手册≥10参考线 |
-| SAS | 过去1周，20题；5/9/13/17/19反向；粗分×1.25取整数部分；<50/50–59/60–69/≥70 |
-| SDS | 过去1周，20题；2/5/6/11/12/14/16/17/18/20反向；粗分×1.25四舍五入；<53/53–62/63–72/≥73；第19项非最低频率独立安全提示 |
-| CES-D20 | 过去1周，0–60；4/8/12/16反向；经典≥16参考线，不按分数“确诊” |
-| GDS-15 | NARI Australian Chinese standard老年版，0–15；1/5/7/11/13否1，其余是1；0–4/5–9/≥10；≥5建议访谈 |
-| PHQ-15 | 独立版过去4周，15项0–2，总分0–30；0–4/5–9/10–14/15–30；不用于判断躯体症状病因 |
-| SIDAS | 过去1月，5题0–10，第2题反向，总分0–50；第1题0则跳过其余、总分0；不按总分给安全风险等级 |
-| SCI-8 | 过去1月及持续时间，8项4→0，总分0–32，高分较好；原研究≤16参考线 |
-| K6 | 过去30天，0–24；≥13较高困扰参考线，不表示已患严重精神疾病 |
-| K10 | 明确澳大利亚ABS 1–5，总分10–50；10–15/16–21/22–29/30–50，不混用0–40及其他分档 |
-| WHO-5 | 过去2周，原分0–25×4，总分0–100，高分较好；<50等价原始<13；实际可达48/52间隔 |
-| ASRS-v1.1 6Q | 过去6月，1–3题≥有时、4–6题≥经常各计1项；≥4项提示进一步评估；不是0–24频率总分或ASRS-5算法 |
-| AUDIT-10 | 过去12月；前8题0–4、末2题0/2/4，总分0–40；WHO 2001分档0–7/8–15/16–19/≥20；第1题从不则2–8跳过计0，仍需9–10 |
-| AUDIT-C | AUDIT前三题0–12；第1题从不则后两题跳过计0；并列提示男性≥4、女性≥3，不收集性别 |
-| CAGE | 曾经经历，否0/是1，总分0–4；采用≥2参考线，1分也可讨论 |
-| FTND | 当前吸卷烟者，香港中文题序，第一题3/2/1/0，第二至五题0/1，第六题0/1/2/3，总分0–10；五档0–2/3–4/5/6–7/8–10 |
-| BIS/BAS | 20计分项，选项1不符合→4符合，1/18反向；BIS、Drive、Fun、Reward四维分别报告，无总分或疾病阈值；中文参考译文 |
-| PHQ-2 | PHQ-9前2题0–6，≥3初筛参考线，按需选择，不作为必经入口 |
-| GAD-2 | GAD-7前2题0–6，≥3初筛参考线，按需选择 |
-| PHQ-4 | GAD-2在前、PHQ-2在后；0–12；心理困扰0–2/3–5/6–8/9–12，分量表各≥3 |
+新增内容采用上传资料中的中文参考译文，不声称是已验证的正式中文临床修订版。来源、版本、时间范围及规则均可在各表“填写须知与版本”和“量表与依据”查看。原作者署名、版权及使用条件保留；用户提供的完整PDSS-SR和LSAS-SR参考题文已按请求接入，不据此声称获得原权利人的独立授权或临床背书。
 
-SDS公开资料存在截断/四舍五入差异，本版完整注明选用版本、粗分和换算。例如粗分42：本版53，截断版52。GBZ/T164—2022是职业卫生标准，仅参考其换算，不将其当普通精神科诊断指南；原文72分处区间有重叠，本版用互斥区间。整数粗分×1.25四舍五入后不能出现标准分72，因此重度≥73与原文≥72对可达分数结果一致。
+原有22份包括PHQ-9、GAD-7、SAS、SDS、CES-D20、SIDAS、SCI-8、PHQ-15、K6/K10、WHO-5、ASRS-v1.1 6Q、BIS/BAS、原版EPQ-R短版48项、GDS-15、AUDIT、CAGE、FTND、AUDIT-C、PHQ-2、GAD-2、PHQ-4。
 
-## 来源与授权
+## 正式表计分辅助
 
-每个问卷在页面内有独立题文、回顾时间、计分、版本差异与来源链接。扩充内容的主要原始来源：
+共13个，不计入36份完整问卷：BDI-II、BAI、PDSS-SR、LSAS-SR、HCL-32、Y-BOCS原版10项、OCI-R、ISI、ESS、HADS、EPDS、QIDS-SR16、PSS-10。
 
-- WHO-5：https://www.who.int/publications/m/item/WHO-UCN-MSD-MHE-2024.01
-- K6/K10原作者：https://rckessler.scholars.harvard.edu/k10-and-k6-scales
-- K10 ABS分档：https://www.abs.gov.au/ausstats/abs@.nsf/lookup/4817.0.55.001Chapter92007-08
-- CES-D中文研究：https://link.springer.com/article/10.1186/1471-2288-11-74
-- GDS15具体译本：https://web.stanford.edu/~yesavage/Australian%20Chinese.pdf
-- SIDAS：https://nceph.anu.edu.au/research/tools-resources/suicidal-ideation-attributes-scale-sidas
-- SCI原始研究与附录：https://bmjopen.bmj.com/content/4/3/e004183
-- ASRS六题当前许可：https://license.tov.med.nyu.edu/product/asrs6Qscreener
-- AUDIT WHO2001：https://www.afro.who.int/sites/default/files/2017-06/english_0.pdf
-- AUDIT中文：https://auditscreen.org/cmsb/uploads/audit-chinese.pdf
-- AUDIT-C：https://www.hiv.uw.edu/page/substance-use/audit-c
-- CAGE：https://www.hiv.uw.edu/page/substance-use/cage
-- FTND中文：https://www.dhc.gov.hk/sc/fagerstrom_test_of_nicotine_dependence.html
-- PHQ/GAD原手册：https://www.hss.gov.nt.ca/professionals/sites/professionals/files/resources/instruction-manual-phq-scoring.pdf
-- PHQ/GAD中文题文：https://ubwp.buffalo.edu/rdc-tmdinternational/wp-content/uploads/sites/58/2017/01/DC-TMD-Chinese-Assessment-Instruments_2016_8_11.pdf
+除PSS-10输入未反向的原始回答值外，其余输入正式表已经赋好的最终项目分值，不能重复反向。HADS焦虑/抑郁各0–21并列显示；Y-BOCS观念/行为各0–20；QIDS按睡眠1–4、食欲体重6–9和精神运动15–16各取最大值，再与其余六域相加0–27；EPDS第10项和QIDS第12项非零单独提示安全评估。辅助没有对应题文，不能代替正式问卷。
 
-**WHO-5、SIDAS、SCI-8、CAGE、BIS/BAS在网页中使用中文参考译文，明确不称为已核验的正式中文版本。**相关参考界值主要来自原语言/特定人群研究，不能保证中文网页的临床效能。WHO-5保留CC BY-NC-SA3.0 IGO、非WHO翻译免责声明；SCI-8保留Sleepio Limited、CC BY-NC4.0及改编说明。其他工具作者归属与使用许可分别保留；不存在一张适用于整套内容的统一商业许可。
+压缩包未提供BDI-II、BAI、HCL-32、Y-BOCS、SCL-90、MMPI-2、16PF的完整题本，本次没有虚构这些题库或常模。专业工具目录和计分辅助分别标明当前实现方式。
 
-医院常用的HAMD/HAMA/MADRS、C-SSRS、ASQ、HADS、BDI-II/BAI/BHS、DASS、MDQ/HCL32/YMRS、PSQI/ISI/ESS、Y-BOCS/OCI-R、PCL-5、SCL-90、QIDS-SR、DAST、EPDS/SCOFF另提供用途与专业/授权获取方向。未把这些资料入口当作可作答题库。临床自评、专业他评与不同授权版本不能混为一谈。
+## 关键计分约定
 
-## 隐私
+- SAS粗分×1.25取整数部分；SDS采用所列中国职业卫生来源的四舍五入规则，勿与其他取整方案混比。
+- WHO-5高分较好，原始0–25乘4；SCI-8高分睡眠较好，所列原研究≤16为参考。
+- ASRS-v1.1六项采用原阴影阈值[2,2,2,3,3,3]计数，不是ASRS-5。
+- SIDAS首题0按原规则跳题，其余情况第2项反向；任何分数均不能用于确认安全或预测行为。
+- K10使用所列ABS 10–50编码；不得与另一种0–40编码混用。
+- EPQ-R原短版不等于中国EPQ-RSC，P/E/N/L各0–12，不用中国常模或一个人格总分；原1985 Table9的E正向题不包含第2项。
+- PSS-10反向4/5/7/8，总0–40，原作者没有低/中/高诊断切点。
+- CBI原表允许达到各域最低答题数后计算，本系统要求适用域完整回答；不适用时该域全部标记，避免把部分缺答当作0。
 
-- 所有答案与分数在浏览器运算，默认只在当前页面内存；无登录、接口、数据库、统计追踪、第三方脚本或远程字体。
-- CSP `connect-src 'none'; form-action 'none'`；没有fetch/XHR/beacon/WebSocket/ServiceWorker。
-- 主动保存才写入专用localStorage键`xinqing-local-results-v1`，只存摘要不存逐题答案，最多100条。旧记录保留其规则版本。
-- 本机摘要不加密，浏览器扩展、同域其他页面、OS备份与主动分享不由本站控制。
-- GitHub Pages仍可能产生IP、访问时间等托管日志，但本站不上传量表答案、分数或历史记录。
-- 本次概览与导出摘要移除逐题分数；个人文字报告含逐题回答。离线HTML使用初始化前的原始快照，不嵌入当前答案和历史记录。
+## 隐私和边界
 
-## 实现与验证
+单文件HTML，无服务器、账号、患者身份字段、分析追踪、外部脚本、远程字体、答案API或自动云同步。CSP包含connect-src 'none'和form-action 'none'；未使用fetch、XHR、WebSocket、Beacon或Service Worker。
 
-`index.html`单文件，无构建依赖或服务端。`node test.cjs`运行自动检查：原有PHQ9全组合262144种、SAS/SDS全部粗分20–80，新增GDS15全部32768种、ASRS全部15625种回答，21种输入范围、反向计分、SIDAS与饮酒跳题、各参考边界、隐私/CSP和离线原始快照。
+答案默认在当前页面内存，主动保存才将摘要写入localStorage（未加密，不含逐题答案，最多100条）。旧版记录保留其原版本标记；关闭页面未保存答案会丢失。文字报告包含逐题回答，主动导出或分享应自行保管。离线HTML使用初始空白页面快照，不把当前答案、结果或历史嵌入下载文件。
 
-浏览器已检查三种困扰入口、连续完整问卷、漏答、跳过后概览、SIDAS首题0的跳题零分和安全文案、390px手机宽度布局。此项为浏览器窄屏检查，未在实体微信或安卓设备上全面验证。程序测试不能证明临床准确率100%。
+GitHub Pages仍可记录普通网页访问/IP信息；点击外部来源链接将离开本站。“本机计算”指本站不自动上传作答或分数，不代表托管平台完全无访问日志。
 
-## 用户指定清单的补充处理
+本工具不是诊断、处方、急救或实时监护系统。参考译文及本网页未经过独立临床验证，程序测试不能证明临床准确率100%。当前安全问题需单独评估，不能等量表总分达到某条线。
 
-PHQ-9/GAD-7/SDS/SAS原有完整填写保留，新增BIS/BAS的20计分项版本（原24题省去4填充），不把长短版或四个维度虚增为独立量表。采用原作者高分方向，区别于PhenX网页原始低分编码，不套中文修订版的不同题号。
+## 验证
 
-PSS-10提供不含受保护题文的手工计分辅助：录入已有正式表的10个0–4原始回答值，4/5/7/8自动反向，0–40，不生成低中高诊断分档。它不计入22份完整问卷数量。作者当前要求经Mapi申请，中文译本权利另属译者，未以旧的教育使用说明推断已获公开中文电子化许可。
+运行 `node mental-health/test.cjs`（仓库内）或在当前项目运行 `node test.cjs`。
 
-HCL-32、PDSS/PDSS-SR、LSAS/LSAS-SR、Y-BOCS、BDI/BAI、SCL-90、MMPI-2、16PF在专门目录给出用途、具体版本及获取方向。Y-BOCS当前持权方明确要求公开数字化许可；PDSS/LSAS/HCL32未核实相应公开重分发权限。MMPI2/16PF不提供脱离常模和专业解释的自动人格诊断。
+回归检查622534项、扩展检查524项通过，包括PHQ9穷举、Zung取整、反向键、跳题、不适用分母、多维均分、SPANE差分、QIDS取最大域及隐私/CSP。扩展检查固定原CSS的SHA256，防止整合时替换原风格。
 
-新增来源：
-- BIS/BAS PhenX免费使用协议与20计分项：https://www.phenxtoolkit.org/protocols/view/540601
-- 作者高分方向计分key保存版：https://depts.washington.edu/uwcssc/sites/default/files//hw00/d40/uwcssc/sites/default/files/BIS-BAS.pdf
-- PSS作者许可、中文权利与无切点：https://www.cmu.edu/dietrich/psychology/stress-immunity-disease-lab/scales/index.html
-- PSS反向算法：https://www.cmu.edu/dietrich/psychology/stress-immunity-disease-lab/scales/html/pssscoring.html
-- Y-BOCS持权方：https://ocdscales.com/
-- HCL32手册：https://www.lakarhuset.com/docs/HCL_32_R1_Manual.pdf
-- PDSS-SR中文验证：https://pubmed.ncbi.nlm.nih.gov/32295552/
-- LSAS原手册：https://heilbrigdisvisindastofnun.hi.is/sites/heilbrigdisvisindastofnun.hi.is/files/2022-12/LSAS_Manual.pdf
+浏览器检查：PDSS-SR七项均4得到28/28、均分4；TIPI十项中立得到五维各4/7，概览正确显示分维结果；390px手机宽度下PC-PTSD-5入口选否则只需回答1项、后5项隐藏、总0/5。标准连字符缩写搜索已修正。所有测试输入均为虚构数据；未在实体微信或所有实体手机上测试。
 
-补充浏览器验证：BIS/BAS四维结果为22/28、16/16、16/16、20/20的人工检查例，结果与本机历史均不出现总分；PSS10十个2分输入结果20/40。所有测试输入均为虚构测试用例，与用户自身状态无关。
+## 主要新增原始依据
 
-
-## 2.1 原始资料再次核实
-
-新增原1985 EPQ-R短版48项的中文参考译文（不是中国EPQ-RSC），P/E/N/L各12项，四维原始分0–12，无总分或T分，无疾病诊断阈值。爱丁堡大学官方目录将原短版列为公共领域。原论文附录2与表9逐项核对；第三方网络转载E计分键误多列第2项，本版不采用该错误。翻译未经独立验证，不能将本网页称为已验证的临床中文量表。
-
-另有BDI-II、BAI、PDSS-SR、LSAS-SR、HCL-32五个不含题文的正式表计分辅助，加上PSS10共六个，不算作完整可填写问卷。用于诊所已有合法正式问卷的数值录入，录入不保存或上传。LSAS按情境恐惧/回避交替录入，分别0–72、总0–144；HCL只录核心32项，不包含外围问题。未知版本不得混套。未把“可公开阅读”当作“已许可公开复制/翻译”。已更新LSAS作者免费临床使用依据，不能笼统称全部量表收费或不能用。
-
-来源：
-- EPQ-R原短版公共领域：https://ppls.ed.ac.uk/psychology/research/facilities/philosophy-and-psychology-library/psychological-tests/commonly-used-tests
-- 原论文附录2、表9：https://www.dmpsy.club/references/Eysenck_EPQR_1985.pdf
-- LSAS作者临床免费使用记录：https://www.carlbring.se/fbanken/lsas-sr/
-- BDI-II分档资料：https://www.ncbi.nlm.nih.gov/sites/books/NBK526364/table/table8/?report=objectonly
-- BAI计分：https://www.sralab.org/rehabilitation-measures/beck-anxiety-inventory
+- VA PCL-5：https://www.ptsd.va.gov/professional/assessment/adult-sr/ptsd-checklist.asp
+- VA PC-PTSD-5：https://www.ptsd.va.gov/professional/assessment/screens/pc-ptsd.asp
+- B-IPF：https://www.ptsd.va.gov/professional/assessment/functioning-other/ipf_psychosocial_function.asp
+- CBI原表：https://nfa.dk/media/a4wheblj/cbi-scales.pdf
+- IPIP五维key：https://www.ipip.ori.org/newBigFive5broadKey.htm
+- TIPI：https://gosling.psy.utexas.edu/scales-weve-developed/ten-item-personality-measure-tipi/
+- GSE：https://userpage.fu-berlin.de/health/faq_gse.pdf
+- RSES所用题序：https://www.sralab.org/sites/default/files/2017-06/Rosenberg%20Scale.pdf
+- SWLS/FS/SPANE：https://eddiener.com/
 - PDSS-SR原表：https://www.mcgill.ca/psy/files/psy/pdss.pdf
-- HCL中文研究及版本说明：https://pmc.ncbi.nlm.nih.gov/articles/PMC3112081/
+- LSAS资料：https://www.carlbring.se/fbanken/lsas-sr/
+- QIDS：https://ids-qids.org/administration.html
 
-本次浏览器检查：EPQ-R48项全部选择“是”得到P5/E10/N12/L3，与独立计分键一致；PDSS-SR七项均4得到28/28；本机记录能保存EPQ四维摘要。均为虚构测试数据。
+完整原有与新增来源列表均在网页“量表与依据”内。
