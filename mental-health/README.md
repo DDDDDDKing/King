@@ -8,7 +8,7 @@
 
 - 首页改为“我觉得有焦虑的情况 / 我觉得有抑郁的情况 / 两种情况都有”，直接进入完整问卷，不要求先做两题或四题初筛。
 - 可调整清单、连续填写、跳过整份问卷、查看本次结果概览、主动本机保存与导出。
-- 21个实际可填写问卷（含长短版本），按主题过滤与搜索。没有把专业/授权工具的资料入口算作可填写问卷。
+- 22个实际可填写问卷（含长短版本），按主题过滤与搜索。没有把专业/授权工具的资料入口算作可填写问卷。
 - 自伤/自杀求助入口始终可见；SIDAS独立跳题与反向计分，无“总分低就安全”的自动判定。
 - 三条路径默认选择4–5项互补问卷，可自由增删。不同分数不相加，不输出综合患病概率。同类工具可二选一，不以数量替代临床需要。
 
@@ -83,9 +83,9 @@ SDS公开资料存在截断/四舍五入差异，本版完整注明选用版本�
 
 PHQ-9/GAD-7/SDS/SAS原有完整填写保留，新增BIS/BAS的20计分项版本（原24题省去4填充），不把长短版或四个维度虚增为独立量表。采用原作者高分方向，区别于PhenX网页原始低分编码，不套中文修订版的不同题号。
 
-PSS-10提供不含受保护题文的手工计分辅助：录入已有正式表的10个0–4原始回答值，4/5/7/8自动反向，0–40，不生成低中高诊断分档。它不计入21份完整问卷数量。作者当前要求经Mapi申请，中文译本权利另属译者，未以旧的教育使用说明推断已获公开中文电子化许可。
+PSS-10提供不含受保护题文的手工计分辅助：录入已有正式表的10个0–4原始回答值，4/5/7/8自动反向，0–40，不生成低中高诊断分档。它不计入22份完整问卷数量。作者当前要求经Mapi申请，中文译本权利另属译者，未以旧的教育使用说明推断已获公开中文电子化许可。
 
-HCL-32、PDSS/PDSS-SR、LSAS/LSAS-SR、Y-BOCS、BDI/BAI、SCL-90、MMPI-2、EPQ、16PF在专门目录给出用途、具体版本及获取方向。Y-BOCS当前持权方明确要求公开数字化许可；PDSS/LSAS/HCL32未核实相应公开重分发权限。MMPI2/EPQ/16PF不提供脱离常模和专业解释的自动人格诊断。
+HCL-32、PDSS/PDSS-SR、LSAS/LSAS-SR、Y-BOCS、BDI/BAI、SCL-90、MMPI-2、16PF在专门目录给出用途、具体版本及获取方向。Y-BOCS当前持权方明确要求公开数字化许可；PDSS/LSAS/HCL32未核实相应公开重分发权限。MMPI2/16PF不提供脱离常模和专业解释的自动人格诊断。
 
 新增来源：
 - BIS/BAS PhenX免费使用协议与20计分项：https://www.phenxtoolkit.org/protocols/view/540601
@@ -98,3 +98,21 @@ HCL-32、PDSS/PDSS-SR、LSAS/LSAS-SR、Y-BOCS、BDI/BAI、SCL-90、MMPI-2、EPQ�
 - LSAS原手册：https://heilbrigdisvisindastofnun.hi.is/sites/heilbrigdisvisindastofnun.hi.is/files/2022-12/LSAS_Manual.pdf
 
 补充浏览器验证：BIS/BAS四维结果为22/28、16/16、16/16、20/20的人工检查例，结果与本机历史均不出现总分；PSS10十个2分输入结果20/40。所有测试输入均为虚构测试用例，与用户自身状态无关。
+
+
+## 2.1 原始资料再次核实
+
+新增原1985 EPQ-R短版48项的中文参考译文（不是中国EPQ-RSC），P/E/N/L各12项，四维原始分0–12，无总分或T分，无疾病诊断阈值。爱丁堡大学官方目录将原短版列为公共领域。原论文附录2与表9逐项核对；第三方网络转载E计分键误多列第2项，本版不采用该错误。翻译未经独立验证，不能将本网页称为已验证的临床中文量表。
+
+另有BDI-II、BAI、PDSS-SR、LSAS-SR、HCL-32五个不含题文的正式表计分辅助，加上PSS10共六个，不算作完整可填写问卷。用于诊所已有合法正式问卷的数值录入，录入不保存或上传。LSAS按情境恐惧/回避交替录入，分别0–72、总0–144；HCL只录核心32项，不包含外围问题。未知版本不得混套。未把“可公开阅读”当作“已许可公开复制/翻译”。已更新LSAS作者免费临床使用依据，不能笼统称全部量表收费或不能用。
+
+来源：
+- EPQ-R原短版公共领域：https://ppls.ed.ac.uk/psychology/research/facilities/philosophy-and-psychology-library/psychological-tests/commonly-used-tests
+- 原论文附录2、表9：https://www.dmpsy.club/references/Eysenck_EPQR_1985.pdf
+- LSAS作者临床免费使用记录：https://www.carlbring.se/fbanken/lsas-sr/
+- BDI-II分档资料：https://www.ncbi.nlm.nih.gov/sites/books/NBK526364/table/table8/?report=objectonly
+- BAI计分：https://www.sralab.org/rehabilitation-measures/beck-anxiety-inventory
+- PDSS-SR原表：https://www.mcgill.ca/psy/files/psy/pdss.pdf
+- HCL中文研究及版本说明：https://pmc.ncbi.nlm.nih.gov/articles/PMC3112081/
+
+本次浏览器检查：EPQ-R48项全部选择“是”得到P5/E10/N12/L3，与独立计分键一致；PDSS-SR七项均4得到28/28；本机记录能保存EPQ四维摘要。均为虚构测试数据。
